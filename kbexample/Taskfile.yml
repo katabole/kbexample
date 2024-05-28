@@ -60,8 +60,8 @@ tasks:
       # Ensure these dev-related databases exist and create them if they don't yet.
       # The former is the app's dev database, while the latter is essentially a "scratch" database used by atlas
       # (see https://atlasgo.io/concepts/dev-database#introduction)
-      - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'gbexample_dev'" | grep -q 1 || psql -c "CREATE DATABASE gbexample_dev"
-      - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'gbexample_test'" | grep -q 1 || psql -c "CREATE DATABASE gbexample_test"
+      - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'kbexample_dev'" | grep -q 1 || psql -c "CREATE DATABASE kbexample_dev"
+      - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'kbexample_test'" | grep -q 1 || psql -c "CREATE DATABASE kbexample_test"
       - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'atlas_dev'" | grep -q 1 || psql -c "CREATE DATABASE atlas_dev"
 
   db:down:
@@ -72,7 +72,7 @@ tasks:
   db:apply:
     desc: Ensure any changes in the schema.sql file are applied to the dev database
     cmds:
-      - atlas schema apply --to file://schema.sql --url "postgresql:///gbexample_dev" --dev-url "postgresql:///atlas_dev"
+      - atlas schema apply --to file://schema.sql --url "postgresql:///kbexample_dev" --dev-url "postgresql:///atlas_dev"
 
   db:gen-migration:
     desc: Create a migration file based on the changes made to schema.sql
@@ -82,6 +82,6 @@ tasks:
   db:shell:
     desc: Open a psql shell to the dev database
     cmds:
-      - psql gbexample_dev
+      - psql kbexample_dev
 
 # vim: set expandtab tabstop=2

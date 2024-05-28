@@ -1,4 +1,4 @@
-module github.com/dankinder/gobase/gbexample
+module github.com/dankinder/katabole/kbexample
 
 go 1.22.3
 

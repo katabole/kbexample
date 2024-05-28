@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/dankinder/gobase/gbexample/models"
+	"github.com/dankinder/katabole/kbexample/models"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
 	"github.com/hashicorp/go-multierror"

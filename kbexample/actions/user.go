@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/dankinder/gobase/gbexample/models"
+	"github.com/dankinder/katabole/kbexample/models"
 )
 
 func (app *App) UsersGET(w http.ResponseWriter, r *http.Request) {

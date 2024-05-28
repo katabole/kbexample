@@ -8,8 +8,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/dankinder/gobase/gbexample/public/dist"
-	"github.com/dankinder/gobase/gbexample/templates"
+	"github.com/dankinder/katabole/kbexample/public/dist"
+	"github.com/dankinder/katabole/kbexample/templates"
 	"github.com/unrolled/render"
 )
 

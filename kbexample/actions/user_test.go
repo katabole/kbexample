@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/dankinder/gobase/gbexample/models"
+	"github.com/dankinder/katabole/kbexample/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

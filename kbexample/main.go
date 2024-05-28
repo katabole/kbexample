@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/dankinder/gobase/gbexample/actions"
+	"github.com/dankinder/katabole/kbexample/actions"
 	"github.com/kelseyhightower/envconfig"
 )
 
