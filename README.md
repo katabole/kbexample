@@ -5,12 +5,13 @@ A productive Go web framework.
 
 TODO: 
 - unit test http helpers
-- html form post
 - require login
 - tests in models (with in-code fixture example)
 - db seed
 - cli for project generation
 - application.js
+- Automated http API doc
+- Upgrade to bootstrap 5 https://getbootstrap.com/docs/5.3/getting-started/webpack/
 
 Setup instructions to cover
 - Install Task https://taskfile.dev/installation/

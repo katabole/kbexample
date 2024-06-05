@@ -95,7 +95,10 @@ func NewApp(conf Config) (*App, error) {
 		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
 	}).Handler(app.srv.Handler)
 	app.srv.Handler = handlers.CombinedLoggingHandler(log.Default().Writer(), app.srv.Handler)
-	app.srv.Handler = handlers.RecoveryHandler(handlers.RecoveryLogger(log.Default()))(app.srv.Handler)
+	app.srv.Handler = handlers.RecoveryHandler(
+		handlers.RecoveryLogger(log.Default()),
+		handlers.PrintRecoveryStack(true),
+	)(app.srv.Handler)
 
 	app.render, err = NewRenderer(conf.DeployEnv.IsProduction())
 	if err != nil {

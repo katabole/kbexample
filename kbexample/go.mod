@@ -3,7 +3,7 @@ module github.com/dankinder/katabole/kbexample
 go 1.22.3
 
 require (
-	github.com/golang/gddo v0.0.0-20210115222349-20d68f94ee1f
+	github.com/elnormous/contenttype v1.0.4
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/sessions v1.2.2
 	github.com/hashicorp/go-multierror v1.1.1
@@ -12,6 +12,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/markbates/goth v1.54.1
+	github.com/monoculum/formam v3.5.5+incompatible
 	github.com/stretchr/testify v1.8.4
 	github.com/unrolled/render v1.6.1
 	github.com/unrolled/secure v1.14.0
@@ -24,7 +25,6 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/golang/protobuf v1.3.1 // indirect
-	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/gorilla/mux v1.7.4 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect

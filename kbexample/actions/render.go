@@ -60,9 +60,16 @@ func (r *Renderer) Data(w http.ResponseWriter, req *http.Request, status int, v 
 }
 
 // HTML builds up the response from the specified template and bindings.
-func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, status int, name string, binding interface{}, htmlOpt ...render.HTMLOptions) error {
+func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, status int, name string, binding any, htmlOpt ...render.HTMLOptions) error {
+	flash := Flash(req)
 	SaveSession(w, req)
-	return r.rnd.HTML(w, status, name, binding, htmlOpt...)
+	if binding == nil {
+		binding = map[string]any{}
+	}
+	return r.rnd.HTML(w, status, name, map[string]any{
+		"Flash": flash,
+		"Data":  binding,
+	}, htmlOpt...)
 }
 
 // JSON marshals the given interface object and writes the JSON response.
@@ -97,8 +104,8 @@ func (r *Renderer) Redirect(w http.ResponseWriter, req *http.Request, url string
 // Error figures out how to render the given error message appropriate to the expected content type, while showing full
 // error messages in dev but not in production.
 func (r *Renderer) Error(w http.ResponseWriter, req *http.Request, status int, err error) {
-	switch AcceptContentType(req) {
-	case AcceptHTML:
+	switch GetContentType(req) {
+	case ContentTypeHTML:
 		r.HTMLError(w, req, status, err)
 	default:
 		r.JSONError(w, req, status, err)
@@ -113,7 +120,7 @@ func (r *Renderer) HTMLError(w http.ResponseWriter, req *http.Request, status in
 		return
 	}
 
-	r.HTML(w, req, status, "error", map[string]string{"message": "internal error, see logs for details"})
+	r.HTML(w, req, status, "error", map[string]string{"message": err.Error()})
 }
 
 // HTMLError sends the user a JSON error payload, hiding error details in production.

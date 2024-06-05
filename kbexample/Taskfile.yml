@@ -26,7 +26,7 @@ tasks:
 
   dev:
     desc: Run a local dev server, watching for changes
-    deps: ["dev:backend", "dev:frontend"]
+    deps: ["dev:frontend", "dev:backend"]
 
   dev:backend:
     cmds:
@@ -39,7 +39,9 @@ tasks:
       - npx webpack --watch
 
   dev:dlv:
+    desc: Run the backend with dlv for debugging
     cmds:
+      - npx webpack
       - dlv debug .
 
   test:
