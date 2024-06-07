@@ -3,6 +3,7 @@ module github.com/dankinder/katabole/kbexample
 go 1.22.3
 
 require (
+	github.com/dankinder/katabole v0.0.0-00010101000000-000000000000
 	github.com/elnormous/contenttype v1.0.4
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/sessions v1.2.2
@@ -13,7 +14,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/markbates/goth v1.54.1
 	github.com/monoculum/formam v3.5.5+incompatible
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/unrolled/render v1.6.1
 	github.com/unrolled/secure v1.14.0
 )

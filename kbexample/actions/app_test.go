@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"os/exec"
 	"testing"
 
+	kb "github.com/dankinder/katabole"
 	"github.com/dankinder/katabole/kbexample/models"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -36,15 +38,36 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+type Fixture struct {
+	t      *testing.T
+	App    *App
+	Client *kb.HTTPClient
+}
+
 // Setup starts a local test server and returns it along with a cleanup function that should be deferred.
-func Setup(t *testing.T) (*App, func()) {
+func NewFixture(t *testing.T) *Fixture {
 	app, err := NewApp(conf)
 	require.Nil(t, err)
 
 	app.Start()
 	CleanDB(t, app.db.DB)
-	return app, func() { assert.Nil(t, app.Stop(context.Background())) }
+
+	baseURL, err := url.Parse("http://" + app.srv.Addr)
+	require.Nil(t, err)
+
+	return &Fixture{
+		t:      t,
+		App:    app,
+		Client: kb.NewHTTPClient(kb.HTTPClientConfig{BaseURL: baseURL}),
+	}
 }
+
+func (f *Fixture) Cleanup() {
+	assert.Nil(f.t, f.App.Stop(context.Background()))
+}
+
+// Database test setup
+//
 
 // SetupDB runs atlas to ensure the database is up to date.
 func SetupDB(dbConf models.Config, atlasDevDBConf models.Config) error {

@@ -1,5 +1,7 @@
 package models
 
+import "database/sql"
+
 type User struct {
 	ID   int    `db:"id" json:"id" formam:"id"`
 	Name string `db:"name" json:"name" formam:"name"`
@@ -24,7 +26,17 @@ func (db *DB) GetUserByID(id int) (*User, error) {
 }
 
 func (db *DB) UpdateUser(u *User) error {
-	_, err := db.Exec("UPDATE users SET name=$1 WHERE id=$2", u.Name, u.ID)
+	result, err := db.Exec("UPDATE users SET name=$1 WHERE id=$2", u.Name, u.ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
 	return err
 }
 

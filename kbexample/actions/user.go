@@ -135,7 +135,11 @@ func (app *App) UserPUT(w http.ResponseWriter, r *http.Request) {
 	// Even if they pass an ID in the body, ignore it and use the one from the URL.
 	u.ID = id
 	if err := app.db.UpdateUser(&u); err != nil {
-		app.render.Error(w, r, http.StatusInternalServerError, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			app.render.Error(w, r, http.StatusNotFound, errors.New("user not found"))
+		} else {
+			app.render.Error(w, r, http.StatusInternalServerError, err)
+		}
 		return
 	}
 
