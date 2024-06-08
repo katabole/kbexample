@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/dankinder/katabole/kbexample/models"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
 	"github.com/hashicorp/go-multierror"
+	"github.com/katabole/kbexample/models"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"

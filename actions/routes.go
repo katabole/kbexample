@@ -3,7 +3,7 @@ package actions
 import (
 	"net/http"
 
-	"github.com/dankinder/katabole/kbexample/public/dist"
+	"github.com/katabole/kbexample/public/dist"
 	"github.com/markbates/goth/gothic"
 )
 

@@ -9,10 +9,10 @@ import (
 	"os/exec"
 	"testing"
 
-	kb "github.com/dankinder/katabole"
-	"github.com/dankinder/katabole/kbexample/models"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	"github.com/katabole/kbexample/models"
+	"github.com/katabole/kbhttp"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -41,7 +41,7 @@ func TestMain(m *testing.M) {
 type Fixture struct {
 	t      *testing.T
 	App    *App
-	Client *kb.HTTPClient
+	Client *kbhttp.Client
 }
 
 // Setup starts a local test server and returns it along with a cleanup function that should be deferred.
@@ -58,7 +58,7 @@ func NewFixture(t *testing.T) *Fixture {
 	return &Fixture{
 		t:      t,
 		App:    app,
-		Client: kb.NewHTTPClient(kb.HTTPClientConfig{BaseURL: baseURL}),
+		Client: kbhttp.NewClient(kbhttp.ClientConfig{BaseURL: baseURL}),
 	}
 }
 

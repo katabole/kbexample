@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/dankinder/katabole/kbexample/models"
+	"github.com/katabole/kbexample/models"
 	"github.com/monoculum/formam"
 )
 

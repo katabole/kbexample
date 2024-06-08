@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/dankinder/katabole/kbexample/models"
+	"github.com/katabole/kbexample/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
