@@ -10,6 +10,7 @@ require (
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/joho/godotenv v1.5.1
+	github.com/katabole/kbhttp v0.0.0-20240608031303-2968e7ed6882
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/markbates/goth v1.54.1
 	github.com/monoculum/formam v3.5.5+incompatible
@@ -31,7 +32,6 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
-	github.com/katabole/kbhttp v0.0.0-20240608031303-2968e7ed6882 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
