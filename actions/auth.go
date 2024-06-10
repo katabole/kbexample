@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/katabole/kbsession"
 	"github.com/markbates/goth/gothic"
 )
 
@@ -30,7 +31,7 @@ func (app *App) AuthCallback(w http.ResponseWriter, r *http.Request) {
 	//	return
 	//}
 
-	s := Session(r)
+	s := kbsession.Get(r)
 	//s["UserID"] = v.ID
 	//s.Values["UserName"] = v.Name
 	//s.Values["UserEmail"] = v.Gpmail
@@ -42,7 +43,7 @@ func (app *App) AuthCallback(w http.ResponseWriter, r *http.Request) {
 // if the user is not logged in, then the frontend should redirect to /auth/google
 func (app *App) RequireLogin(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		s := Session(r)
+		s := kbsession.Get(r)
 		lastUsed := s.Values["LastUsed"]
 
 		if lastUsed != nil {
@@ -78,6 +79,6 @@ func (app *App) RequireLogin(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func (app *App) LogoutGET(w http.ResponseWriter, r *http.Request) {
-	clear(Session(r).Values)
+	clear(kbsession.Get(r).Values)
 	app.render.Redirect(w, r, "/", http.StatusSeeOther)
 }

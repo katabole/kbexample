@@ -6,12 +6,12 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
-	"sync"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
 	"github.com/hashicorp/go-multierror"
 	"github.com/katabole/kbexample/models"
+	"github.com/katabole/kbsession"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
@@ -31,14 +31,10 @@ type Config struct {
 }
 
 type App struct {
-	conf         Config
-	srv          *http.Server
-	render       *Renderer
-	db           *models.DB
-	sessionStore sessions.Store
-
-	assetManifestOnceLoader sync.Once
-	assetManifest           map[string]string
+	conf   Config
+	srv    *http.Server
+	render *Renderer
+	db     *models.DB
 }
 
 func NewApp(conf Config) (*App, error) {
@@ -51,15 +47,8 @@ func NewApp(conf Config) (*App, error) {
 		return nil, fmt.Errorf("could not create database: %w", err)
 	}
 
-	// In production, preload the asset manifest. In dev/test it'll get loaded every time.
-	if app.conf.DeployEnv.IsProduction() {
-		app.assetManifest, err = loadManifest()
-		if err != nil {
-			return nil, fmt.Errorf("could not load asset manifest: %w", err)
-		}
-	}
-
 	// Configure our session store. For test/dev it can be a dummy but for production it must be secure.
+	var sessionStore sessions.Store
 	if conf.DeployEnv.IsProduction() {
 		if conf.SessionSecret == "" {
 			return nil, fmt.Errorf("SESSION_SECRET must be set")
@@ -67,16 +56,16 @@ func NewApp(conf Config) (*App, error) {
 		s := sessions.NewCookieStore([]byte(conf.SessionSecret))
 		s.Options.Secure = true
 		s.Options.HttpOnly = true
-		app.sessionStore = s
+		sessionStore = s
 	} else {
 		if conf.SessionSecret == "" {
 			conf.SessionSecret = "not-so-super-secret"
 		}
-		app.sessionStore = sessions.NewCookieStore([]byte(conf.SessionSecret))
+		sessionStore = sessions.NewCookieStore([]byte(conf.SessionSecret))
 	}
 
 	// Set up oauth, which is configured globally here and applied in routes.go
-	gothic.Store = app.sessionStore
+	gothic.Store = sessionStore
 	goth.UseProviders(
 		google.New(conf.GoogleOAuthKey, conf.GoogleOAuthSecret, fmt.Sprintf(conf.FrontendHost+"/auth/google/callback")),
 	)
@@ -87,7 +76,7 @@ func NewApp(conf Config) (*App, error) {
 		Handler: app.defineRoutes(),
 	}
 	// TODO(dk): form POST example with csrf protection https://github.com/gorilla/csrf
-	app.srv.Handler = app.SessionHandler(app.srv.Handler)
+	app.srv.Handler = kbsession.NewHandler(sessionStore, app.srv.Handler)
 	app.srv.Handler = handlers.CORS()(app.srv.Handler)
 	app.srv.Handler = secure.New(secure.Options{
 		IsDevelopment:   !conf.DeployEnv.IsProduction(),

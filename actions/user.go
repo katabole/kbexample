@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/katabole/kbexample/models"
+	"github.com/katabole/kbsession"
 	"github.com/monoculum/formam"
 )
 
@@ -164,7 +165,7 @@ func (app *App) UserDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if GetContentType(r) == ContentTypeHTML {
-		AddFlash(r, "success", "User deleted")
+		kbsession.AddFlash(r, "success", "User deleted")
 		app.render.Redirect(w, r, "/users", http.StatusSeeOther)
 	} else {
 		app.render.JSON(w, r, http.StatusOK, map[string]string{"message": "User deleted"})

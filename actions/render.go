@@ -10,6 +10,7 @@ import (
 
 	"github.com/katabole/kbexample/public/dist"
 	"github.com/katabole/kbexample/templates"
+	"github.com/katabole/kbsession"
 	"github.com/unrolled/render"
 )
 
@@ -55,14 +56,14 @@ func NewRenderer(isProduction bool) (*Renderer, error) {
 
 // Data writes out the raw bytes as binary data.
 func (r *Renderer) Data(w http.ResponseWriter, req *http.Request, status int, v []byte) error {
-	SaveSession(w, req)
+	kbsession.Save(w, req)
 	return r.rnd.Data(w, status, v)
 }
 
 // HTML builds up the response from the specified template and bindings.
 func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, status int, name string, binding any, htmlOpt ...render.HTMLOptions) error {
-	flash := Flash(req)
-	SaveSession(w, req)
+	flash := kbsession.Flash(req)
+	kbsession.Save(w, req)
 	if binding == nil {
 		binding = map[string]any{}
 	}
@@ -74,30 +75,30 @@ func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, status int, na
 
 // JSON marshals the given interface object and writes the JSON response.
 func (r *Renderer) JSON(w http.ResponseWriter, req *http.Request, status int, v interface{}) error {
-	SaveSession(w, req)
+	kbsession.Save(w, req)
 	return r.rnd.JSON(w, status, v)
 }
 
 // JSONP marshals the given interface object and writes the JSON response.
 func (r *Renderer) JSONP(w http.ResponseWriter, req *http.Request, status int, callback string, v interface{}) error {
-	SaveSession(w, req)
+	kbsession.Save(w, req)
 	return r.rnd.JSONP(w, status, callback, v)
 }
 
 // Text writes out a string as plain text.
 func (r *Renderer) Text(w http.ResponseWriter, req *http.Request, status int, v string) error {
-	SaveSession(w, req)
+	kbsession.Save(w, req)
 	return r.rnd.Text(w, status, v)
 }
 
 // XML marshals the given interface object and writes the XML response.
 func (r *Renderer) XML(w http.ResponseWriter, req *http.Request, status int, v interface{}) error {
-	SaveSession(w, req)
+	kbsession.Save(w, req)
 	return r.rnd.XML(w, status, v)
 }
 
 func (r *Renderer) Redirect(w http.ResponseWriter, req *http.Request, url string, status int) {
-	SaveSession(w, req)
+	kbsession.Save(w, req)
 	http.Redirect(w, req, url, status)
 }
 
