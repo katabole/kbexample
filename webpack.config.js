@@ -12,6 +12,7 @@ const configurator = {
       application: [
         './node_modules/jquery-ujs/src/rails.js',
         './public/assets/css/application.scss',
+        './public/assets/js/application.js',
       ],
     }
 
@@ -21,11 +22,11 @@ const configurator = {
       }
 
       let key = entry.replace(/(\.\/assets\/(src|js|css|go)\/)|\.(ts|js|s[ac]ss|go)/g, '')
-      if(key.startsWith("_") || (/(ts|js|s[ac]ss|go)$/i).test(entry) == false) {
+      if (key.startsWith("_") || (/(ts|js|s[ac]ss|go)$/i).test(entry) == false) {
         return
       }
 
-      if( entries[key] == null) {
+      if (entries[key] == null) {
         entries[key] = [entry]
         return
       }
@@ -39,7 +40,7 @@ const configurator = {
     var plugins = [
       new Webpack.ProvidePlugin({$: "jquery",jQuery: "jquery"}),
       new MiniCssExtractPlugin({filename: "[name].[contenthash].css"}),
-      new CopyWebpackPlugin([{from: "./public/assets",to: ""}], {copyUnmodified: true,ignore: ["css/**", "js/**", "src/**"] }),
+      new CopyWebpackPlugin([{from: "./public/assets",to: ""}], {copyUnmodified: true, ignore: ["css/**", "js/**", "src/**"]}),
       new Webpack.LoaderOptionsPlugin({minimize: true,debug: false}),
       new WebpackManifestPlugin({
         fileName: `${__dirname}/public/dist/manifest.json`
@@ -66,17 +67,18 @@ const configurator = {
         { test: /\.jsx?$/,loader: "babel-loader",exclude: /node_modules/ },
         { test: /\.(woff|woff2|ttf|svg)(\?v=\d+\.\d+\.\d+)?$/,use: "url-loader"},
         { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,use: "file-loader" },
-        { test: require.resolve("jquery"),use: "expose-loader?exposes=jQuery!expose-loader?$"},
+        { test: require.resolve("jquery"),use: "expose-loader?exposes=jQuery!expose-loader?exposes=$"},
         { test: /\.go$/, use: "gopherjs-loader"}
       ]
     }
   },
 
   buildConfig: function(){
-    // NOTE: If you are having issues with this not being set "properly", make
-    // sure your GO_ENV is set properly as `buffalo build` overrides NODE_ENV
-    // with whatever GO_ENV is set to or "development".
-    const env = process.env.NODE_ENV || "development";
+	if (process.env.DEPLOY_ENV == "development" || process.env.DEPLOY_ENV == "test") {
+		env = "development"
+	} else {
+		env = "production"
+	}
 
     var config = {
       mode: env,
@@ -87,6 +89,10 @@ const configurator = {
         publicPath: "assets",
 		path: `${__dirname}/public/dist/assets`,
         clean: true,
+        library: {
+			name: 'App',
+			type: 'var',
+		},
       },
       plugins: configurator.plugins(),
       module: configurator.moduleOptions(),
@@ -95,7 +101,7 @@ const configurator = {
       }
     }
 
-    if( env === "development" ){
+    if (env === "development") {
       config.plugins.push(new LiveReloadPlugin({appendScriptTag: true}))
       return config
     }
