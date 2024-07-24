@@ -16,7 +16,7 @@ tasks:
   setup:go:
       - go install
   setup:air:
-      - go install github.com/cosmtrek/air@v1.52.0
+      - go install github.com/air-verse/air@v1.52.2
   setup:atlas:
       - curl -sSf https://atlasgo.sh | sh -s -- -y
   setup:npm:

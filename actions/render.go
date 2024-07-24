@@ -117,11 +117,11 @@ func (r *Renderer) Error(w http.ResponseWriter, req *http.Request, status int, e
 func (r *Renderer) HTMLError(w http.ResponseWriter, req *http.Request, status int, err error) {
 	if r.isProduction {
 		slog.Info("Internal error", "err", err)
-		r.HTML(w, req, status, "error", map[string]string{"message": "internal error, see logs for details"})
+		r.HTML(w, req, status, "error", map[string]string{"Message": "internal error, see logs for details"})
 		return
 	}
 
-	r.HTML(w, req, status, "error", map[string]string{"message": err.Error()})
+	r.HTML(w, req, status, "error", map[string]string{"Message": err.Error()})
 }
 
 // HTMLError sends the user a JSON error payload, hiding error details in production.
