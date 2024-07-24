@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/sessions"
 	"github.com/hashicorp/go-multierror"
@@ -71,24 +72,31 @@ func NewApp(conf Config) (*App, error) {
 	)
 
 	// Define our core server and handler, then wrap it with other handler middleware (logging, etc.)
+	router := chi.NewRouter()
+	// TODO(dk): form POST example with csrf protection https://github.com/gorilla/csrf
+	router.Use(
+		handlers.RecoveryHandler(
+			handlers.RecoveryLogger(log.Default()),
+			handlers.PrintRecoveryStack(true),
+		),
+		func(next http.Handler) http.Handler {
+			return handlers.CombinedLoggingHandler(log.Default().Writer(), next)
+		},
+		secure.New(secure.Options{
+			IsDevelopment:   !conf.DeployEnv.IsProduction(),
+			SSLRedirect:     true,
+			SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
+		}).Handler,
+		handlers.CORS(),
+		kbsession.NewMiddleware(sessionStore),
+	)
+
+	app.defineRoutes(router)
+
 	app.srv = &http.Server{
 		Addr:    conf.ServerAddr,
-		Handler: app.defineRoutes(),
+		Handler: router,
 	}
-	// TODO(dk): form POST example with csrf protection https://github.com/gorilla/csrf
-	app.srv.Handler = kbsession.NewHandler(sessionStore, app.srv.Handler)
-	app.srv.Handler = handlers.CORS()(app.srv.Handler)
-	app.srv.Handler = secure.New(secure.Options{
-		IsDevelopment:   !conf.DeployEnv.IsProduction(),
-		SSLRedirect:     true,
-		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
-	}).Handler(app.srv.Handler)
-	app.srv.Handler = handlers.CombinedLoggingHandler(log.Default().Writer(), app.srv.Handler)
-	app.srv.Handler = handlers.RecoveryHandler(
-		handlers.RecoveryLogger(log.Default()),
-		handlers.PrintRecoveryStack(true),
-	)(app.srv.Handler)
-
 	app.render, err = NewRenderer(conf.DeployEnv.IsProduction())
 	if err != nil {
 		return nil, fmt.Errorf("could not create renderer: %w", err)

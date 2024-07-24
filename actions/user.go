@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/katabole/kbexample/models"
 	"github.com/katabole/kbsession"
 	"github.com/monoculum/formam"
@@ -85,7 +86,7 @@ func (app *App) UserEditGET(w http.ResponseWriter, r *http.Request) {
 
 // getUserHelper gets the user, or returns nil in which case it has already sent back an error.
 func (app *App) getUserHelper(w http.ResponseWriter, r *http.Request) *models.User {
-	id, err := strconv.Atoi(r.PathValue("id"))
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		app.render.Error(w, r, http.StatusBadRequest, err)
 		return nil
@@ -110,7 +111,7 @@ func (app *App) getUserHelper(w http.ResponseWriter, r *http.Request) *models.Us
 
 // UserPUT handles PUT /users/{id}
 func (app *App) UserPUT(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id"))
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		app.render.Error(w, r, http.StatusBadRequest, err)
 		return
@@ -153,7 +154,7 @@ func (app *App) UserPUT(w http.ResponseWriter, r *http.Request) {
 
 // UserDELETE handles DELETE /users/{id}
 func (app *App) UserDELETE(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id"))
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		app.render.Error(w, r, http.StatusBadRequest, err)
 		return

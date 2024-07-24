@@ -3,30 +3,29 @@ package actions
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/katabole/kbexample/public/dist"
 	"github.com/markbates/goth/gothic"
 )
 
-func (app *App) defineRoutes() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /auth", gothic.BeginAuthHandler)
-	mux.HandleFunc("GET /auth/provider/callback", app.AuthCallback)
+func (app *App) defineRoutes(r *chi.Mux) {
+	r.Get("/auth", gothic.BeginAuthHandler)
+	r.Get("/auth/provider/callback", app.AuthCallback)
 
-	mux.HandleFunc("GET /{$}", app.HomeGET)
-	mux.HandleFunc("GET /logout", app.LogoutGET)
+	r.Get("/", app.HomeGET)
+	r.Get("/logout", app.LogoutGET)
 
-	mux.HandleFunc("GET /users/new", app.UserNewGET)
-	mux.HandleFunc("POST /users", app.UserPOST)
-	mux.HandleFunc("GET /users/{id}", app.UserGET)
-	mux.HandleFunc("GET /users/{id}/edit", app.UserEditGET)
-	mux.HandleFunc("PUT /users/{id}", app.UserPUT)
-	mux.HandleFunc("POST /users/{id}/update", app.UserPUT)
-	mux.HandleFunc("DELETE /users/{id}", app.UserDELETE)
-	mux.HandleFunc("POST /users/{id}/delete", app.UserDELETE)
-	mux.HandleFunc("GET /users", app.UsersGET)
+	r.Get("/users/new", app.UserNewGET)
+	r.Post("/users", app.UserPOST)
+	r.Get("/users/{id}", app.UserGET)
+	r.Get("/users/{id}/edit", app.UserEditGET)
+	r.Put("/users/{id}", app.UserPUT)
+	r.Post("/users/{id}/update", app.UserPUT)
+	r.Delete("/users/{id}", app.UserDELETE)
+	r.Post("/users/{id}/delete", app.UserDELETE)
+	r.Get("/users", app.UsersGET)
 
-	// This will match if nothing else does
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		msg := "404 Not Found"
 		if GetContentType(r) == ContentTypeHTML {
 			app.render.HTML(w, r, http.StatusOK, "error", msg)
@@ -35,9 +34,8 @@ func (app *App) defineRoutes() *http.ServeMux {
 		}
 	})
 
-	mux.Handle("GET /assets/{path...}", http.FileServerFS(dist.BuiltAssets))
-	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+	r.Handle("/assets/*", http.FileServer(http.FS(dist.BuiltAssets)))
+	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFileFS(w, r, dist.BuiltAssets, "assets/images/favicon.ico")
 	})
-	return mux
 }

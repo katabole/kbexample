@@ -32,6 +32,8 @@ github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/gliderlabs/ssh v0.1.1/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
+github.com/go-chi/chi/v5 v5.1.0 h1:acVI1TYaD+hhedDJ3r54HyA6sExp3HfXq7QWEEY/xMw=
+github.com/go-chi/chi/v5 v5.1.0/go.mod h1:DslCQbL2OYiznFReuXYUmQ2hGd1aDpCnlMNITLSKoi8=
 github.com/go-sql-driver/mysql v1.4.0/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
@@ -96,6 +98,8 @@ github.com/katabole/kbsession v0.0.0-20240610175237-3261835c9bbd h1:oGXebTcFJJl8
 github.com/katabole/kbsession v0.0.0-20240610175237-3261835c9bbd/go.mod h1:e9+WnWdfN0jj21BkF3LPd8GeuH1+7dAXeXd9hpcvobI=
 github.com/katabole/kbsession v0.0.0-20240610183108-3491ea305d6c h1:Iko33Fl2h/MZqlZTQFxQ9S2gJpHSNWBsu0TtUKs/tMY=
 github.com/katabole/kbsession v0.0.0-20240610183108-3491ea305d6c/go.mod h1:e9+WnWdfN0jj21BkF3LPd8GeuH1+7dAXeXd9hpcvobI=
+github.com/katabole/kbsession v0.0.0-20240724182218-26897e45cfa0 h1:OgJaTTbVR805r5suOofvn9/kyPL8pI2j+26H6dUIj/Q=
+github.com/katabole/kbsession v0.0.0-20240724182218-26897e45cfa0/go.mod h1:e9+WnWdfN0jj21BkF3LPd8GeuH1+7dAXeXd9hpcvobI=
 github.com/katabole/kbsql v0.0.0-20240610142951-abb9e91ce4ea h1:2eQMF9Uq8nM1cM5jp/QrYVWmvWl029TNpbPAwioZJnA=
 github.com/katabole/kbsql v0.0.0-20240610142951-abb9e91ce4ea/go.mod h1:fcbaM90VKJVwhQMWTVZryolV3Z1xEKjZ5dKKzxx9Q44=
 github.com/katabole/kbsql v0.0.0-20240610165214-3299959a5ac0 h1:RUtgnd4KyISBC4/xjluMzk39cOLXR+/q05/NvDPwfu4=
