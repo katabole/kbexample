@@ -86,4 +86,9 @@ tasks:
     cmds:
       - psql kbexample_dev
 
+  db:seed:
+    desc: Insert seed data into the database
+    cmds:
+      - go run ./cmd/dbseed
+
 # vim: set expandtab tabstop=2
