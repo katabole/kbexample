@@ -3,12 +3,12 @@ package actions
 import (
 	"context"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/gorilla/handlers"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/gorilla/sessions"
 	"github.com/hashicorp/go-multierror"
 	"github.com/katabole/kbexample/models"
@@ -71,25 +71,27 @@ func NewApp(conf Config) (*App, error) {
 		google.New(conf.GoogleOAuthKey, conf.GoogleOAuthSecret, fmt.Sprintf(conf.FrontendHost+"/auth/google/callback")),
 	)
 
-	// Define our core server and handler, then wrap it with other handler middleware (logging, etc.)
+	// Define our router middleware (logging, etc.), then define routes
 	router := chi.NewRouter()
 	// TODO(dk): form POST example with csrf protection https://github.com/gorilla/csrf
-	router.Use(
-		handlers.RecoveryHandler(
-			handlers.RecoveryLogger(log.Default()),
-			handlers.PrintRecoveryStack(true),
-		),
-		func(next http.Handler) http.Handler {
-			return handlers.CombinedLoggingHandler(log.Default().Writer(), next)
-		},
-		secure.New(secure.Options{
-			IsDevelopment:   !conf.DeployEnv.IsProduction(),
-			SSLRedirect:     true,
-			SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
-		}).Handler,
-		handlers.CORS(),
-		kbsession.NewMiddleware(sessionStore),
-	)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(secure.New(secure.Options{
+		IsDevelopment:   !conf.DeployEnv.IsProduction(),
+		SSLRedirect:     true,
+		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
+	}).Handler)
+	router.Use(cors.Handler(cors.Options{
+		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
+		AllowedOrigins: []string{"https://*", "http://*"},
+		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	}))
+	router.Use(kbsession.NewMiddleware(sessionStore))
 
 	app.defineRoutes(router)
 
