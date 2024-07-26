@@ -11,18 +11,24 @@ tasks:
   #
   setup:
     desc: Install dependencies
-    deps: ["setup:go", "setup:air", "setup:npm"] # "setup:atlas"
+    cmds:
+      - task: "setup:npm"
+      - task: "setup:go"
+      - task: "setup:air"
+      - task: "setup:atlas"
+      - task: "db:up"
+      - echo "Setup complete. Run 'task dev' to start the dev server."
 
+  setup:npm:
+      - npm install
+      # Do an initial build of the frontend assets to ensure that when we build the Go app, embed succeeds
+      - npx webpack
   setup:go:
       - go install
   setup:air:
       - go install github.com/air-verse/air@v1.52.2
   setup:atlas:
       - curl -sSf https://atlasgo.sh | sh -s -- -y
-  setup:npm:
-      - npm install
-      # Do an initial build of the frontend assets to ensure that when we build the Go app, embed succeeds
-      - npx webpack
 
   dev:
     desc: Run a local dev server, watching for changes

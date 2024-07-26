@@ -18,7 +18,7 @@ bin
 .idea/
 .vscode/
 
-# Other phemeral files
+# Other ephemeral files
 tmp
 node_modules
 public/dist/manifest.json
