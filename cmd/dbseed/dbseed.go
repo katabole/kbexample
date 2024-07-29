@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/katabole/kbexample/actions"
@@ -9,6 +10,8 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	var conf actions.Config
 	if err := envconfig.Process("", &conf); err != nil {
 		log.Fatal(err.Error())
@@ -25,7 +28,7 @@ func main() {
 		{Name: "Bob"},
 		{Name: "Charlie"},
 	} {
-		if _, err := db.CreateUser(&u); err != nil {
+		if _, err := db.CreateUser(ctx, &u); err != nil {
 			log.Fatal(err.Error())
 		}
 	}
