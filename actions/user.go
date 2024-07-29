@@ -16,7 +16,7 @@ import (
 
 // UsersGET handles GET /users
 func (app *App) UsersGET(w http.ResponseWriter, r *http.Request) {
-	users, err := app.db.GetUsers(r.Context())
+	users, err := app.db.GetUsers()
 	if err != nil {
 		app.render.Error(w, r, http.StatusInternalServerError, err)
 		return
@@ -53,7 +53,7 @@ func (app *App) UserPOST(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	newUser, err := app.db.CreateUser(r.Context(), &u)
+	newUser, err := app.db.CreateUser(&u)
 	if err != nil {
 		app.render.Error(w, r, http.StatusInternalServerError, err)
 		return
@@ -92,7 +92,7 @@ func (app *App) getUserHelper(w http.ResponseWriter, r *http.Request) *models.Us
 		return nil
 	}
 
-	u, err := app.db.GetUserByID(r.Context(), id)
+	u, err := app.db.GetUserByID(id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			msg := fmt.Sprintf("User ID %d not found", id)
@@ -136,7 +136,7 @@ func (app *App) UserPUT(w http.ResponseWriter, r *http.Request) {
 
 	// Even if they pass an ID in the body, ignore it and use the one from the URL.
 	u.ID = id
-	if err := app.db.UpdateUser(r.Context(), &u); err != nil {
+	if err := app.db.UpdateUser(&u); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			app.render.Error(w, r, http.StatusNotFound, errors.New("user not found"))
 		} else {
@@ -160,7 +160,7 @@ func (app *App) UserDELETE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := app.db.DeleteUser(r.Context(), id); err != nil {
+	if err := app.db.DeleteUser(id); err != nil {
 		app.render.Error(w, r, http.StatusInternalServerError, err)
 		return
 	}
