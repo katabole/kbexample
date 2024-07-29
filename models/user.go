@@ -14,15 +14,15 @@ func (db *DB) GetUsers() ([]*User, error) {
 }
 
 func (db *DB) CreateUser(u *User) (*User, error) {
-	var newUser User
-	err := db.QueryRowx("INSERT INTO users (name) VALUES ($1) RETURNING *", u.Name).StructScan(&newUser)
-	return &newUser, err
+	var user User
+	err := db.Get(&user, "INSERT INTO users (name) VALUES ($1) RETURNING *", u.Name)
+	return &user, err
 }
 
 func (db *DB) GetUserByID(id int) (*User, error) {
-	user := &User{}
-	err := db.QueryRowx("SELECT * FROM users WHERE id=$1", id).StructScan(user)
-	return user, err
+	var user User
+	err := db.Get(&user, "SELECT * FROM users WHERE id=$1", id)
+	return &user, err
 }
 
 func (db *DB) UpdateUser(u *User) error {
