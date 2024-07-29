@@ -35,7 +35,9 @@ func (app *App) defineRoutes(r *chi.Mux) {
 	})
 
 	r.Handle("/assets/*", http.FileServer(http.FS(dist.BuiltAssets)))
-	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFileFS(w, r, dist.BuiltAssets, "assets/images/favicon.ico")
-	})
+	for _, f := range []string{"favicon.ico", "robots.txt"} {
+		r.Get("/"+f, func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFileFS(w, r, dist.BuiltAssets, "assets/"+f)
+		})
+	}
 }
