@@ -41,7 +41,7 @@ type Fixture struct {
 	Client *kbhttp.Client
 }
 
-// Setup starts a local test server and returns it along with a cleanup function that should be deferred.
+// NewFixture starts a local test server and returns it along with a cleanup function that should be deferred.
 func NewFixture(t *testing.T) *Fixture {
 	app, err := NewApp(conf)
 	require.Nil(t, err)
