@@ -1,9 +1,9 @@
 {
-  "name": "buffalo",
+  "name": "kbexample",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "repository": "github.com/gobuffalo/buffalo",
+  "repository": "github.com/katabole/kbexample",
   "engines": {
     "node": ">=18"
   },
