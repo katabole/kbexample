@@ -1,0 +1,42 @@
+package usertemplates
+
+import (
+	"fmt"
+
+	"github.com/katabole/kbexample/models"
+)
+
+templ New(user *models.User) {
+	<div class="container-fluid">
+		<h1>
+			if user != nil {
+				Edit User
+			} else {
+				Create New User
+			}
+		</h1>
+		<form
+			method="POST"
+			if user != nil {
+				action={ templ.URL(fmt.Sprintf("/users/%d/update", user.ID)) }
+			} else {
+				action="/users"
+			}
+		>
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input
+					id="name"
+					class="form-control"
+					type="text"
+					name="name"
+					if user != nil {
+						value={ user.Name }
+					}
+					required=""
+				/>
+			</div>
+			<button type="submit" class="btn btn-primary btn-lg">Submit</button>
+		</form>
+	</div>
+}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/katabole/kbexample/public/dist"
+	"github.com/katabole/kbexample/templates"
 	"github.com/markbates/goth/gothic"
 )
 
@@ -28,7 +29,7 @@ func (app *App) defineRoutes(r *chi.Mux) {
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		msg := "404 Not Found"
 		if GetContentType(r) == ContentTypeHTML {
-			app.render.HTML(w, r, http.StatusOK, "error", msg)
+			app.render.HTML(w, r, http.StatusOK, templates.Error(msg))
 		} else {
 			app.render.JSON(w, r, http.StatusNotFound, map[string]string{"error": msg})
 		}

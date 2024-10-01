@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"log/slog"
 	"net/http"
 
+	"github.com/a-h/templ"
 	"github.com/katabole/kbexample/public/dist"
 	"github.com/katabole/kbexample/templates"
 	"github.com/katabole/kbsession"
@@ -35,11 +35,6 @@ func NewRenderer(isProduction bool) (*Renderer, error) {
 		FileSystem: &render.EmbedFileSystem{
 			FS: templates.EmbeddedTemplates,
 		},
-		Funcs: []template.FuncMap{
-			template.FuncMap{
-				"asset": r.Asset,
-			},
-		},
 	})
 
 	// In production, preload the asset manifest. In dev/test it'll get loaded every time since it may change.
@@ -61,16 +56,20 @@ func (r *Renderer) Data(w http.ResponseWriter, req *http.Request, status int, v 
 }
 
 // HTML builds up the response from the specified template and bindings.
-func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, status int, name string, binding any, htmlOpt ...render.HTMLOptions) error {
+func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, status int, component templ.Component) error {
+	manifest := r.assetManifest
+	if !r.isProduction {
+		var err error
+		manifest, err = loadManifest()
+		if err != nil {
+			return err
+		}
+	}
+
 	flash := kbsession.Flash(req)
 	kbsession.Save(w, req)
-	if binding == nil {
-		binding = map[string]any{}
-	}
-	return r.rnd.HTML(w, status, name, map[string]any{
-		"Flash": flash,
-		"Data":  binding,
-	}, htmlOpt...)
+	ctx := templates.SetGlobals(req.Context(), manifest)
+	return templates.Layout(flash, component).Render(ctx, w)
 }
 
 // JSON marshals the given interface object and writes the JSON response.
@@ -117,14 +116,14 @@ func (r *Renderer) Error(w http.ResponseWriter, req *http.Request, status int, e
 func (r *Renderer) HTMLError(w http.ResponseWriter, req *http.Request, status int, err error) {
 	if r.isProduction {
 		slog.Info("Internal error", "err", err)
-		r.HTML(w, req, status, "error", map[string]string{"Message": "internal error, see logs for details"})
+		r.HTML(w, req, status, templates.Error("internal error, see logs for details"))
 		return
 	}
 
-	r.HTML(w, req, status, "error", map[string]string{"Message": err.Error()})
+	r.HTML(w, req, status, templates.Error(err.Error()))
 }
 
-// HTMLError sends the user a JSON error payload, hiding error details in production.
+// JSONError sends the user a JSON error payload, hiding error details in production.
 func (r *Renderer) JSONError(w http.ResponseWriter, req *http.Request, status int, err error) {
 	if r.isProduction {
 		slog.Info("Internal error", "err", err)

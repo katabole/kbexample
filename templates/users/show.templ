@@ -1,0 +1,39 @@
+package usertemplates
+
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/katabole/kbexample/models"
+)
+
+script deleteConfirmation(event templ.JSExpression) {
+    var action = confirm('Are you sure you want to delete?');
+    if (!action) {
+        event.preventDefault();
+    }
+}
+
+templ Show(user *models.User) {
+	<div class="row mb-5">
+		<h1 class="col-sm-8 col-md-9">{ user.Name }</h1>
+	</div>
+	<dl class="row density-comfortable">
+		<dt class="col-sm-1">ID</dt>
+		<dd class="col-sm-11">{ strconv.Itoa(user.ID) }</dd>
+		<dt class="col-sm-1">Name</dt>
+		<dd class="col-sm-11">{ user.Name }</dd>
+	</dl>
+	<div class="row">
+		<div class="col-sm-1">
+			<a class="btn btn-primary" href={ templ.URL(fmt.Sprintf("/users/%d/edit", user.ID)) }>Edit</a>
+		</div>
+		<form class="col-sm-1" action={ templ.URL(fmt.Sprintf("/users/%d/delete", user.ID)) } method="POST" onsubmit={ deleteConfirmation(templ.JSExpression("event")) }>
+			<button type="submit" class="btn btn-danger">Delete</button>
+		</form>
+	</div>
+}
+
+templ NotFound(id int) {
+	User ID { strconv.Itoa(id) } not found
+}

@@ -1,0 +1,61 @@
+package templates
+
+import (
+	"fmt"
+)
+
+templ Layout(flash map[string][]string, contents templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>KBExample - templ</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta charset="utf-8"/>
+			<link href={ getAsset(ctx, "application.css") } media="screen" rel="stylesheet"/>
+			<link rel="icon" href="/assets/images/favicon.ico"/>
+		</head>
+		<body>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+				<div class="container-fluid">
+					<a class="navbar-brand" href="/">KBExample</a>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<ul class="navbar-nav mr-auto">
+							<li class="nav-item">
+								<a class="nav-link" href="/">Home</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/users">Users</a>
+							</li>
+						</ul>
+						<div class="nav-item dropdown">
+							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								user_email
+							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+								<a class="dropdown-item" href="/logout">Logout</a>
+							</div>
+						</div>
+					</div>
+				</div> <!-- .container -->
+			</nav>
+			if len(flash) != 0 {
+				<div class="container">
+					for k, values := range flash {
+						for _, v := range values {
+							<div class={ "alert", fmt.Sprintf("alert-%s", k) } role="alert">
+								{ v }
+							</div>
+						}
+					}
+				</div>
+			}
+			<div class="container">
+				@contents
+			</div>
+			<script src={ getAsset(ctx, "application.js") }></script>
+		</body>
+	</html>
+}

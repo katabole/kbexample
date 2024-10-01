@@ -1,0 +1,36 @@
+package usertemplates
+
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/katabole/kbexample/models"
+)
+
+templ List(users []*models.User) {
+	<div class="card mb-5">
+		<div class="card-header form-inline" style="display: flex; justify-content: space-between">
+			<h2>Users</h2>
+			<a href="/users/new" class="btn btn-primary form-control">New User</a>
+		</div>
+		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th></th>
+			</tr>
+			for _, u := range users {
+				<tr>
+					<td>{ strconv.Itoa(u.ID) }</td>
+					<td>{ u.Name }</td>
+					<td><a href={ templ.URL(fmt.Sprintf("/users/%d", u.ID)) } class="btn btn-secondary">View</a></td>
+				</tr>
+			}
+			if len(users) == 0 {
+				<tr>
+					<td colspan="3">No users found</td>
+				</tr>
+			}
+		</table>
+	</div>
+}

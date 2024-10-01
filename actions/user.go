@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/katabole/kbexample/models"
+	usertemplates "github.com/katabole/kbexample/templates/users"
 	"github.com/katabole/kbsession"
 	"github.com/monoculum/formam"
 )
@@ -23,7 +24,7 @@ func (app *App) UsersGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if GetContentType(r) == ContentTypeHTML {
-		app.render.HTML(w, r, http.StatusOK, "users/list", users)
+		app.render.HTML(w, r, http.StatusOK, usertemplates.List(users))
 	} else {
 		app.render.JSON(w, r, http.StatusOK, map[string]interface{}{"users": users})
 	}
@@ -31,7 +32,7 @@ func (app *App) UsersGET(w http.ResponseWriter, r *http.Request) {
 
 // UserNewGET handles GET /users/new
 func (app *App) UserNewGET(w http.ResponseWriter, r *http.Request) {
-	app.render.HTML(w, r, http.StatusOK, "users/new", nil)
+	app.render.HTML(w, r, http.StatusOK, usertemplates.New(nil))
 }
 
 // UserPOST handles POST /users
@@ -70,7 +71,7 @@ func (app *App) UserPOST(w http.ResponseWriter, r *http.Request) {
 func (app *App) UserGET(w http.ResponseWriter, r *http.Request) {
 	if u := app.getUserHelper(w, r); u != nil {
 		if GetContentType(r) == ContentTypeHTML {
-			app.render.HTML(w, r, http.StatusOK, "users/show", u)
+			app.render.HTML(w, r, http.StatusOK, usertemplates.Show(u))
 		} else {
 			app.render.JSON(w, r, http.StatusOK, u)
 		}
@@ -80,7 +81,7 @@ func (app *App) UserGET(w http.ResponseWriter, r *http.Request) {
 // UserEditGET handles GET /users/{id}/edit
 func (app *App) UserEditGET(w http.ResponseWriter, r *http.Request) {
 	if u := app.getUserHelper(w, r); u != nil {
-		app.render.HTML(w, r, http.StatusOK, "users/new", map[string]interface{}{"Edit": true, "User": u})
+		app.render.HTML(w, r, http.StatusOK, usertemplates.New(u))
 	}
 }
 
@@ -97,7 +98,7 @@ func (app *App) getUserHelper(w http.ResponseWriter, r *http.Request) *models.Us
 		if errors.Is(err, sql.ErrNoRows) {
 			msg := fmt.Sprintf("User ID %d not found", id)
 			if GetContentType(r) == ContentTypeHTML {
-				app.render.HTML(w, r, http.StatusNotFound, "users/error", msg)
+				app.render.HTML(w, r, http.StatusNotFound, usertemplates.NotFound(id))
 			} else {
 				app.render.JSON(w, r, http.StatusNotFound, map[string]string{"message": msg})
 			}
