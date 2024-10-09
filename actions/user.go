@@ -23,7 +23,7 @@ func (app *App) UsersGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if GetContentType(r) == ContentTypeHTML {
-		app.render.HTML(w, r, http.StatusOK, "users/list", users)
+		app.render.HTML(w, r, HTMLParams{Template: "users/list", Data: users})
 	} else {
 		app.render.JSON(w, r, http.StatusOK, map[string]interface{}{"users": users})
 	}
@@ -31,7 +31,7 @@ func (app *App) UsersGET(w http.ResponseWriter, r *http.Request) {
 
 // UserNewGET handles GET /users/new
 func (app *App) UserNewGET(w http.ResponseWriter, r *http.Request) {
-	app.render.HTML(w, r, http.StatusOK, "users/new", nil)
+	app.render.HTML(w, r, HTMLParams{Template: "users/new"})
 }
 
 // UserPOST handles POST /users
@@ -70,7 +70,7 @@ func (app *App) UserPOST(w http.ResponseWriter, r *http.Request) {
 func (app *App) UserGET(w http.ResponseWriter, r *http.Request) {
 	if u := app.getUserHelper(w, r); u != nil {
 		if GetContentType(r) == ContentTypeHTML {
-			app.render.HTML(w, r, http.StatusOK, "users/show", u)
+			app.render.HTML(w, r, HTMLParams{Template: "users/show", Data: u})
 		} else {
 			app.render.JSON(w, r, http.StatusOK, u)
 		}
@@ -80,7 +80,7 @@ func (app *App) UserGET(w http.ResponseWriter, r *http.Request) {
 // UserEditGET handles GET /users/{id}/edit
 func (app *App) UserEditGET(w http.ResponseWriter, r *http.Request) {
 	if u := app.getUserHelper(w, r); u != nil {
-		app.render.HTML(w, r, http.StatusOK, "users/new", map[string]interface{}{"Edit": true, "User": u})
+		app.render.HTML(w, r, HTMLParams{Template: "users/new", Data: map[string]interface{}{"Edit": true, "User": u}})
 	}
 }
 
@@ -97,7 +97,7 @@ func (app *App) getUserHelper(w http.ResponseWriter, r *http.Request) *models.Us
 		if errors.Is(err, sql.ErrNoRows) {
 			msg := fmt.Sprintf("User ID %d not found", id)
 			if GetContentType(r) == ContentTypeHTML {
-				app.render.HTML(w, r, http.StatusNotFound, "users/error", msg)
+				app.render.HTML(w, r, HTMLParams{Status: http.StatusNotFound, Template: "users/error", Data: msg})
 			} else {
 				app.render.JSON(w, r, http.StatusNotFound, map[string]string{"message": msg})
 			}

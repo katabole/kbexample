@@ -63,3 +63,12 @@ func TestUsersBasicForm(t *testing.T) {
 	_, err = f.Client.GetPage(fmt.Sprintf("/users/%d", u.ID))
 	require.Error(t, err)
 }
+
+func TestLayoutHasUserName(t *testing.T) {
+	f := NewFixture(t)
+	defer f.Cleanup()
+
+	page, err := f.Client.GetPage("/users")
+	require.NoError(t, err)
+	assert.Contains(t, page, "Joe Schmoe")
+}

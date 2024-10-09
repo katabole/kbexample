@@ -60,17 +60,38 @@ func (r *Renderer) Data(w http.ResponseWriter, req *http.Request, status int, v 
 	return r.rnd.Data(w, status, v)
 }
 
-// HTML builds up the response from the specified template and bindings.
-func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, status int, name string, binding any, htmlOpt ...render.HTMLOptions) error {
+// HTMLParams provides all the HTML function needs to render an HTML template.
+type HTMLParams struct {
+	// HTTP Status, defaults to http.StatusOK (200).
+	Status int
+	// Name of the template to render, e.g. "users/new" for templates/users/new.html.
+	Template string
+	// Data to pass to the template, often a map of key/values.
+	Data any
+	// Options for the renderer.
+	HTMLOptions []render.HTMLOptions
+	// A page title used by the layout.
+	Title string
+}
+
+// HTML builds up the response from the specified parameters.
+func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, params HTMLParams) error {
 	flash := kbsession.Flash(req)
+	session := kbsession.Get(req)
 	kbsession.Save(w, req)
-	if binding == nil {
-		binding = map[string]any{}
+
+	if params.Status == 0 {
+		params.Status = http.StatusOK
 	}
-	return r.rnd.HTML(w, status, name, map[string]any{
-		"Flash": flash,
-		"Data":  binding,
-	}, htmlOpt...)
+	if params.Data == nil {
+		params.Data = map[string]any{}
+	}
+	return r.rnd.HTML(w, params.Status, params.Template, map[string]any{
+		"Flash":   flash,
+		"Session": session,
+		"Title":   params.Title,
+		"Data":    params.Data,
+	}, params.HTMLOptions...)
 }
 
 // JSON marshals the given interface object and writes the JSON response.
@@ -117,11 +138,15 @@ func (r *Renderer) Error(w http.ResponseWriter, req *http.Request, status int, e
 func (r *Renderer) HTMLError(w http.ResponseWriter, req *http.Request, status int, err error) {
 	if r.isProduction {
 		slog.Info("Internal error", "err", err)
-		r.HTML(w, req, status, "error", map[string]string{"Message": "internal error, see logs for details"})
+		r.HTML(w, req, HTMLParams{
+			Status:   status,
+			Template: "error",
+			Data:     map[string]string{"Message": "internal error, see logs for details"},
+		})
 		return
 	}
 
-	r.HTML(w, req, status, "error", map[string]string{"Message": err.Error()})
+	r.HTML(w, req, HTMLParams{Status: status, Template: "error", Data: map[string]string{"Message": err.Error()}})
 }
 
 // HTMLError sends the user a JSON error payload, hiding error details in production.

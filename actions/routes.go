@@ -15,20 +15,23 @@ func (app *App) defineRoutes(r *chi.Mux) {
 	r.Get("/", app.HomeGET)
 	r.Get("/logout", app.LogoutGET)
 
-	r.Get("/users/new", app.UserNewGET)
-	r.Post("/users", app.UserPOST)
-	r.Get("/users/{id}", app.UserGET)
-	r.Get("/users/{id}/edit", app.UserEditGET)
-	r.Put("/users/{id}", app.UserPUT)
-	r.Post("/users/{id}/update", app.UserPUT)
-	r.Delete("/users/{id}", app.UserDELETE)
-	r.Post("/users/{id}/delete", app.UserDELETE)
-	r.Get("/users", app.UsersGET)
+	r.Group(func(r chi.Router) {
+		r.Use(app.RequireLogin)
+		r.Get("/users/new", app.UserNewGET)
+		r.Post("/users", app.UserPOST)
+		r.Get("/users/{id}", app.UserGET)
+		r.Get("/users/{id}/edit", app.UserEditGET)
+		r.Put("/users/{id}", app.UserPUT)
+		r.Post("/users/{id}/update", app.UserPUT)
+		r.Delete("/users/{id}", app.UserDELETE)
+		r.Post("/users/{id}/delete", app.UserDELETE)
+		r.Get("/users", app.UsersGET)
+	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		msg := "404 Not Found"
 		if GetContentType(r) == ContentTypeHTML {
-			app.render.HTML(w, r, http.StatusOK, "error", msg)
+			app.render.HTML(w, r, HTMLParams{Status: http.StatusNotFound, Template: "error", Data: msg})
 		} else {
 			app.render.JSON(w, r, http.StatusNotFound, map[string]string{"error": msg})
 		}
