@@ -8,32 +8,13 @@ const LiveReloadPlugin = require('webpack-livereload-plugin');
 
 const configurator = {
   entries: function(){
-    var entries = {
+    return {
       application: [
         './node_modules/jquery-ujs/src/rails.js',
         './public/assets/css/application.scss',
         './public/assets/js/application.js',
       ],
     }
-
-    Glob.sync("./assets/*/*.*").forEach((entry) => {
-      if (entry === './public/assets/css/application.scss') {
-        return
-      }
-
-      let key = entry.replace(/(\.\/assets\/(src|js|css|go)\/)|\.(ts|js|s[ac]ss|go)/g, '')
-      if (key.startsWith("_") || (/(ts|js|s[ac]ss|go)$/i).test(entry) == false) {
-        return
-      }
-
-      if (entries[key] == null) {
-        entries[key] = [entry]
-        return
-      }
-
-      entries[key].push(entry)
-    })
-    return entries
   },
 
   plugins() {
