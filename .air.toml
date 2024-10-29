@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/kbexample"
-  cmd = "go build -o ./tmp/kbexample ."
+  cmd = "pkill kbexample; go build -o ./tmp/kbexample ."
   delay = 1000
   exclude_dir = ["tmp", "vendor", "testdata", "node_modules", "public/dist"]
   exclude_file = []
