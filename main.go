@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/katabole/kbexample/actions"
 	"github.com/kelseyhightower/envconfig"
@@ -24,9 +25,8 @@ func main() {
 
 	app.Start()
 
-	// Wait for an interrupt (ctrl-c)
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	<-c
 
 	app.Stop(context.Background())

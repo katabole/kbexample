@@ -4,12 +4,12 @@ tmp_dir = "tmp"
 
 [build]
   args_bin = []
-  bin = "./tmp/main"
-  cmd = "go build -o ./tmp/main ."
+  bin = "./tmp/kbexample"
+  cmd = "go build -o ./tmp/kbexample ."
   delay = 1000
-  exclude_dir = ["tmp", "vendor", "testdata", "node_modules", "public/assets"]
+  exclude_dir = ["tmp", "vendor", "testdata", "node_modules", "public/dist"]
   exclude_file = []
-  exclude_regex = ["_test.go"]
+  exclude_regex = []
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""
@@ -25,7 +25,7 @@ tmp_dir = "tmp"
   pre_cmd = []
   rerun = false
   rerun_delay = 500
-  send_interrupt = false
+  send_interrupt = true
   stop_on_error = true
 
 [color]
