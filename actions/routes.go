@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -10,7 +11,7 @@ import (
 
 func (app *App) defineRoutes(r *chi.Mux) {
 	r.Get("/auth", gothic.BeginAuthHandler)
-	r.Get("/auth/provider/callback", app.AuthCallback)
+	r.Get("/auth/google/callback", app.AuthCallback)
 
 	r.Get("/", app.HomeGET)
 	r.Get("/logout", app.LogoutGET)
@@ -29,12 +30,7 @@ func (app *App) defineRoutes(r *chi.Mux) {
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		msg := "404 Not Found"
-		if GetContentType(r) == ContentTypeHTML {
-			app.render.HTML(w, r, HTMLParams{Status: http.StatusNotFound, Template: "error", Data: msg})
-		} else {
-			app.render.JSON(w, r, http.StatusNotFound, map[string]string{"error": msg})
-		}
+		app.render.Error(w, r, http.StatusNotFound, errors.New("404 Not Found"))
 	})
 
 	r.Handle("/assets/*", http.FileServer(http.FS(dist.BuiltAssets)))

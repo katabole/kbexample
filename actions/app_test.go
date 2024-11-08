@@ -18,7 +18,8 @@ import (
 var conf Config
 
 func TestMain(m *testing.M) {
-	if err := godotenv.Load("../env/test.env"); err != nil {
+	// Use Overload rather than Load since the user likely has dev env vars loaded, but we want to overwrite them.
+	if err := godotenv.Overload("../env/test.env"); err != nil {
 		log.Fatalf("Error loading test dotenv: %v", err)
 	}
 

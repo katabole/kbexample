@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/katabole/kbsession"
 	"github.com/markbates/goth/gothic"
 )
@@ -11,6 +12,12 @@ import (
 const CookieLifetime = 2 * time.Hour
 
 func (app *App) AuthCallback(w http.ResponseWriter, r *http.Request) {
+	// gothic has a variety of ways it figures out the provider, and unfortunately just taking an argument isn't one of
+	// them, so we do it by setting a query parameter here.
+	v := r.URL.Query()
+	v.Set("provider", chi.URLParam(r, "provider"))
+	r.URL.RawQuery = v.Encode()
+
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
 		app.render.JSONError(w, r, http.StatusUnauthorized, err)

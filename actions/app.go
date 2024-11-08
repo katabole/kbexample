@@ -24,7 +24,7 @@ type Config struct {
 	SessionSecret string        `envconfig:"SESSION_SECRET"`
 	DeployEnv     Environment   `envconfig:"DEPLOY_ENV"`
 	EnforceAuth   bool          `envconfig:"ENFORCE_AUTH"`
-	FrontendHost  string        `envconfig:"FRONTEND_HOST"`
+	SiteURL       string        `envconfig:"SITE_URL"`
 	DBConfig      models.Config `envconfig:"DB"`
 
 	GoogleOAuthKey    string `envconfig:"GOOGLE_OAUTH_KEY"`
@@ -68,7 +68,7 @@ func NewApp(conf Config) (*App, error) {
 	// Set up oauth, which is configured globally here and applied in routes.go
 	gothic.Store = sessionStore
 	goth.UseProviders(
-		google.New(conf.GoogleOAuthKey, conf.GoogleOAuthSecret, fmt.Sprintf(conf.FrontendHost+"/auth/google/callback")),
+		google.New(conf.GoogleOAuthKey, conf.GoogleOAuthSecret, fmt.Sprintf(conf.SiteURL+"/auth/google/callback")),
 	)
 
 	// Define our router middleware (logging, etc.), then define routes

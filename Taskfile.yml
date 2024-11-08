@@ -29,7 +29,7 @@ tasks:
   dev:backend:
     cmds:
       # Sometimes the previous process doesn't get killed properly, ensure it's gone
-      - pkill -f $PWD/tmp/main || true
+      - pkill kbexample || true
       - air {{.CLI_ARGS}}
 
   dev:frontend:
