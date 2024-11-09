@@ -1,0 +1,2 @@
+This file exists to avoid this error, which happens when a go build is attempted before assets have been generated:
+`public/dist/embed.go:5:12: pattern assets/*: no matching files found`
