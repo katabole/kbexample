@@ -55,7 +55,7 @@ tasks:
   db:up:
     desc: Ensure a local postgres dev db is running
     cmds:
-      - docker-compose up -d postgres
+      - docker compose up -d postgres
       - sleep 1 # Give it a second to bind to ports so the next commands don't fail
       # Ensure these dev-related databases exist and create them if they don't yet.
       # The former is the app's dev database, while the latter is essentially a "scratch" database used by atlas
@@ -67,7 +67,7 @@ tasks:
   db:down:
     desc: Take down the local postgres db
     cmds:
-      - docker-compose down postgres
+      - docker compose down postgres
 
   db:apply:
     desc: Ensure any changes in the schema.sql file are applied to the dev database
