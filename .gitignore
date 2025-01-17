@@ -24,3 +24,6 @@ node_modules
 public/dist/manifest.json
 public/dist/assets
 .task
+.tmp
+.task
+.gocache
