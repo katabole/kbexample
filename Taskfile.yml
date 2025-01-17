@@ -20,6 +20,7 @@ tasks:
       - if [[ ! $(command -v atlas) ]]; then curl -sSf https://atlasgo.sh | sh -s -- -y; fi
       - task: "db:up"
       - task: "db:apply"
+      - task: "db:seed"
       - echo "Setup complete. Run 'task dev' to start the dev server."
 
   dev:
