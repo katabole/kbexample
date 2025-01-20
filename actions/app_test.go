@@ -2,6 +2,7 @@ package actions
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -18,17 +19,31 @@ import (
 var conf Config
 
 func TestMain(m *testing.M) {
-	// Use Overload rather than Load since the user likely has dev env vars loaded, but we want to overwrite them.
-	if err := godotenv.Overload("../env/test.env"); err != nil {
-		log.Fatalf("Error loading test dotenv: %v", err)
+	// Start our tests by loading config from `env/test.env`.
+	// Allow overriding this by setting TEST_ENV, for example for CI
+	testEnv := os.Getenv("TEST_ENV")
+	if testEnv == "" {
+		testEnv = "test"
+	}
+
+	if err := godotenv.Overload(fmt.Sprintf("../env/%s.env", testEnv)); err != nil {
+		log.Fatalf("Error loading dotenv for %s: %v", testEnv, err)
 	}
 
 	if err := envconfig.Process("", &conf); err != nil {
 		log.Fatalf("Error loading app config from environment: %v", err)
 	}
+	log.Printf("Loaded env %s", testEnv)
 
+	// Now create databases if necessary. These may already exist but especially for CI doing it here is convenient.
+	if err := kbsql.PostgresCreateDBIfNotExistsByURL(conf.DBConfig.URL()); err != nil {
+		log.Fatalf("Error creating database %s: %v", conf.DBConfig.URL(), err)
+	}
 	atlasDevDBConf := conf.DBConfig
 	atlasDevDBConf.DBName = "atlas_dev"
+	if err := kbsql.PostgresCreateDBIfNotExistsByURL(atlasDevDBConf.URL()); err != nil {
+		log.Fatalf("Error creating database %s: %v", atlasDevDBConf.URL(), err)
+	}
 	if err := kbsql.AtlasSetupDB(conf.DBConfig.URL(), atlasDevDBConf.URL()); err != nil {
 		log.Fatalf("Error setting up database: %v", err)
 	}

@@ -13,7 +13,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/katabole/kbhttp v0.1.0
 	github.com/katabole/kbsession v0.1.0
-	github.com/katabole/kbsql v0.1.0
+	github.com/katabole/kbsql v0.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/markbates/goth v1.54.1
 	github.com/monoculum/formam v3.5.5+incompatible

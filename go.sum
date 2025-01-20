@@ -93,6 +93,8 @@ github.com/katabole/kbsession v0.1.0 h1:WVU2qUiKMwiW4Ko6mXGFnfK6goH4vIoIgrArWFGg
 github.com/katabole/kbsession v0.1.0/go.mod h1:e9+WnWdfN0jj21BkF3LPd8GeuH1+7dAXeXd9hpcvobI=
 github.com/katabole/kbsql v0.1.0 h1:1knTfR+4c9i9nI97wBCqzAc0SrxIG1ckp06UdN9u9W0=
 github.com/katabole/kbsql v0.1.0/go.mod h1:v92taTNWoi5Sahom5zyZrqa/bbRKJmNHqpK9nxhnkWE=
+github.com/katabole/kbsql v0.3.0 h1:kSviNuSPJlqgu1CER/Cbo1p69eR7hlRj5LJkiXQMGZc=
+github.com/katabole/kbsql v0.3.0/go.mod h1:v92taTNWoi5Sahom5zyZrqa/bbRKJmNHqpK9nxhnkWE=
 github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
 github.com/kelseyhightower/envconfig v1.4.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=

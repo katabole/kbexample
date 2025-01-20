@@ -62,7 +62,6 @@ tasks:
       # The former is the app's dev database, while the latter is essentially a "scratch" database used by atlas
       # (see https://atlasgo.io/concepts/dev-database#introduction)
       - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'kbexample_dev'" | grep -q 1 || psql -c "CREATE DATABASE kbexample_dev"
-      - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'kbexample_test'" | grep -q 1 || psql -c "CREATE DATABASE kbexample_test"
       - psql -tc "SELECT 1 FROM pg_database WHERE datname = 'atlas_dev'" | grep -q 1 || psql -c "CREATE DATABASE atlas_dev"
 
   db:down:
