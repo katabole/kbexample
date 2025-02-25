@@ -29,6 +29,12 @@ jobs:
       - name: Setup Go environment
         uses: actions/setup-go@v5
 
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Build frontend assets
+        run: npx vite build
+
       - name: Install dependencies
         run: go mod tidy
 
