@@ -18,7 +18,7 @@ var distDir embed.FS
 func DistDir() fs.FS {
 	f, err := fs.Sub(distDir, "dist")
 	if err != nil {
-		panic(fmt.Sprintf("error opening the assets directory in the build directory (hint: try running vite): %w", err))
+		panic(fmt.Sprintf("error opening the assets directory in the build directory (hint: try running vite): %v", err))
 	}
 	return f
 }
@@ -26,7 +26,7 @@ func DistDir() fs.FS {
 func AssetsDir() fs.FS {
 	f, err := fs.Sub(DistDir(), "assets")
 	if err != nil {
-		panic(fmt.Sprintf("error opening the assets directory in the build directory (hint: try running vite): %w", err))
+		panic(fmt.Sprintf("error opening the assets directory in the build directory (hint: try running vite): %v", err))
 	}
 	return f
 }
