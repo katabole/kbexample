@@ -93,7 +93,9 @@ func NewApp(conf Config) (*App, error) {
 	}))
 	router.Use(kbsession.NewMiddleware(sessionStore))
 
-	app.defineRoutes(router)
+	if err := app.defineRoutes(router); err != nil {
+		return nil, fmt.Errorf("error defining routes: %w", err)
+	}
 
 	app.srv = &http.Server{
 		Addr:    conf.ServerAddr,

@@ -1,0 +1,3 @@
+# Ignore everything in this directory since it gets generated on build, but keep the directory existing so that Go can
+# still build without it (the directory has to exist)
+*
