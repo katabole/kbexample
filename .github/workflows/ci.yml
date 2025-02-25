@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16.4
+        env:
+		  POSTGRES_PASSWORD: "rootpassword"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v5
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Verify formatting
+        run: go fmt ./...
+
+      - name: Run tests
+        run: go test -v ./...
