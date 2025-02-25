@@ -1,8 +1,8 @@
 version: '3'
 
-# Load env/development.env by default, but allow it to be overridden by setting the ENV variable.
+  # Load env/development.env by default, but allow it to be overridden by setting ENV like `ENV=production task <task>`
 env:
-  ENV: development
+  ENV: "{{.ENV | default \"development\"}}"
 dotenv: ['env/{{.ENV}}.env']
 
 tasks:
@@ -14,7 +14,7 @@ tasks:
     cmds:
       - npm install
       # Do an initial build of the frontend assets to ensure that when we build the Go app, embed succeeds
-      - npx webpack
+      - npx vite
       - go install
       - if [[ ! $(command -v air) ]]; then go install github.com/air-verse/air@v1.52.2; fi
       - if [[ ! $(command -v atlas) ]]; then curl -sSf https://atlasgo.sh | sh -s -- -y; fi
@@ -35,12 +35,12 @@ tasks:
 
   dev:frontend:
     cmds:
-      - npx webpack --watch
+      - npx vite --clearScreen false
 
   dev:dlv:
     desc: Run the backend with dlv for debugging
     cmds:
-      - npx webpack
+      - npx vite build
       - dlv debug .
 
   test:
@@ -80,9 +80,9 @@ tasks:
       - atlas migrate diff {{.CLI_ARGS}} --dir "file://migrations" --to file://schema.sql --dev-url "postgresql:///atlas_dev"
 
   db:shell:
-    desc: Open a psql shell to the dev database
+    desc: Open a psql shell to the database
     cmds:
-      - psql kbexample_dev
+      - psql
 
   db:seed:
     desc: Insert seed data into the database

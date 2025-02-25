@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
 
-	<link href="{{asset "application.css"}}" media="screen" rel="stylesheet">
+    {{ .Vite.Tags }}
+
     <link rel="icon" href="/assets/images/favicon.ico">
   </head>
 
@@ -13,7 +14,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
       <div class="container-fluid">
         <a class="navbar-brand" href="/">KBExample</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -29,7 +30,7 @@
 
           {{if .Session.Values.UserEmail}}
           <div class="nav-item dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               {{.Session.Values.UserName}}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -41,22 +42,21 @@
       </div> <!-- .container -->
     </nav>
 
-	{{if .Flash}}
+    {{if .Flash}}
     <div class="container">
-		{{range $key, $values := .Flash}}
-			{{range $value := $values}}
-			<div class="alert alert-{{$key}}" role="alert">
-				{{$value}}
-			</div>
-			{{end}}
-		{{end}}
-	</div>
-	{{end}}
+        {{range $key, $values := .Flash}}
+            {{range $value := $values}}
+            <div class="alert alert-{{$key}}" role="alert">
+                {{$value}}
+            </div>
+            {{end}}
+        {{end}}
+    </div>
+    {{end}}
 
     <div class="container">
-	{{ yield }}
+    {{ yield }}
     </div>
 
-	<script src="{{asset "application.js"}}"></script>
   </body>
 </html>

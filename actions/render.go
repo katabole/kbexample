@@ -1,27 +1,27 @@
 package actions
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"html/template"
 	"log/slog"
 	"net/http"
 
-	"github.com/katabole/kbexample/public/dist"
+	"github.com/katabole/kbexample/build"
 	"github.com/katabole/kbexample/templates"
 	"github.com/katabole/kbsession"
+	"github.com/olivere/vite"
 	"github.com/unrolled/render"
 )
 
 // Renderer wraps the unrolled/render package in order to provide a few goodies (error rendering, session saving).
 type Renderer struct {
-	rnd           *render.Render
-	isProduction  bool
-	assetManifest map[string]string
+	rnd          *render.Render
+	isProduction bool
+	viteFragment *vite.Fragment
 }
 
 func NewRenderer(isProduction bool) (*Renderer, error) {
+	var err error
+
 	r := &Renderer{
 		isProduction: isProduction,
 	}
@@ -35,20 +35,19 @@ func NewRenderer(isProduction bool) (*Renderer, error) {
 		FileSystem: &render.EmbedFileSystem{
 			FS: templates.EmbeddedTemplates,
 		},
-		Funcs: []template.FuncMap{
-			template.FuncMap{
-				"asset": r.Asset,
-			},
-		},
 	})
 
-	// In production, preload the asset manifest. In dev/test it'll get loaded every time since it may change.
-	if isProduction {
-		var err error
-		r.assetManifest, err = loadManifest()
-		if err != nil {
-			return nil, fmt.Errorf("could not load asset manifest: %w", err)
-		}
+	// This object is used by layout.html to render the Vite fragment.
+	// That fragment is js/css imports, which use hot module reloading in dev and are static in production.
+	r.viteFragment, err = vite.HTMLFragment(vite.Config{
+		FS:           build.DistDir(),
+		IsDev:        !isProduction,
+		ViteEntry:    "js/main.js",
+		ViteTemplate: vite.Vanilla,
+		ViteManifest: "manifest.json",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("could not create Vite fragment: %w", err)
 	}
 
 	return r, nil
@@ -90,6 +89,7 @@ func (r *Renderer) HTML(w http.ResponseWriter, req *http.Request, params HTMLPar
 		"Flash":   flash,
 		"Session": session,
 		"Title":   params.Title,
+		"Vite":    r.viteFragment,
 		"Data":    params.Data,
 	}, params.HTMLOptions...)
 }
@@ -158,62 +158,4 @@ func (r *Renderer) JSONError(w http.ResponseWriter, req *http.Request, status in
 	}
 
 	r.JSON(w, req, status, map[string]string{"message": err.Error()})
-}
-
-// Asset loading
-//
-
-// Asset returns the path to an asset by looking it up in the asset manifest. Webpack processes each asset (to minify
-// CSS, for example) and generates the manifest to tell us where to find it. This function is available in templates as
-// the "asset" function.
-//
-// For example consider public/assets/application.js which gets processed by Webpack into
-// public/dist/assets/application.[fingerpring].js. The manifest will have something like:
-//
-//	{
-//	  "assets/application.js": "assets/application.39de836e61570e45cf00.js"
-//	}
-//
-// In a template we would put a script tag like:
-//
-//	<script src="{{ asset "assets/application.js" }}"></script>
-//
-// Which would render as:
-//
-//	<script src="/assets/application.39de836e61570e45cf00.js"></script>
-//
-// This ensures assets are cacheable and have unique URLs.
-func (r *Renderer) Asset(assetPath string) (string, error) {
-	p, err := r.relativeAssetPath(assetPath)
-	return "/" + p, err
-}
-
-func (r *Renderer) relativeAssetPath(assetPath string) (string, error) {
-	if r.isProduction {
-		if len(r.assetManifest) == 0 {
-			// We expect app startup to load the manifest file, so if that's not done yet, something is wrong.
-			return "", errors.New("no asset manifest loaded")
-		}
-		if assetPath, ok := r.assetManifest[assetPath]; ok {
-			return assetPath, nil
-		}
-		return "", fmt.Errorf("asset not found: %s", assetPath)
-	}
-
-	manifest, err := loadManifest()
-	if err != nil {
-		return "", fmt.Errorf("failed to load manifest: %w", err)
-	}
-	if assetPath, ok := manifest[assetPath]; ok {
-		return assetPath, nil
-	}
-	return "", fmt.Errorf("asset not found: %s", assetPath)
-}
-
-func loadManifest() (map[string]string, error) {
-	m := map[string]string{}
-	if err := json.Unmarshal(dist.Manifest, &m); err != nil {
-		return nil, fmt.Errorf("failed to decode manifest: %w", err)
-	}
-	return m, nil
 }
