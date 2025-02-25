@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-go@v5
 
       - name: Install Atlas
-        uses: ariga/setup-atlas@v1
+        uses: ariga/setup-atlas@v0
 
       - name: Install NPM dependencies
         run: npm install
