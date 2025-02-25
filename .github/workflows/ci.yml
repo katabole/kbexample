@@ -29,6 +29,9 @@ jobs:
       - name: Setup Go environment
         uses: actions/setup-go@v5
 
+      - name: Install Atlas
+        uses: ariga/setup-atlas@v1
+
       - name: Install NPM dependencies
         run: npm install
 
