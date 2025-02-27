@@ -14,7 +14,7 @@ tasks:
     cmds:
       - npm install
       # Do an initial build of the frontend assets to ensure that when we build the Go app, embed succeeds
-      - npx vite
+      - npx vite build
       - go install
       - if [[ ! $(command -v air) ]]; then go install github.com/air-verse/air@v1.52.2; fi
       - if [[ ! $(command -v atlas) ]]; then curl -sSf https://atlasgo.sh | sh -s -- -y; fi
