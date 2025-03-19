@@ -1,6 +1,8 @@
 module github.com/katabole/kbexample
 
-go 1.22.3
+go 1.24
+
+toolchain go1.24.1
 
 require (
 	github.com/elnormous/contenttype v1.0.4
@@ -17,7 +19,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/markbates/goth v1.54.1
 	github.com/monoculum/formam v3.5.5+incompatible
-	github.com/olivere/vite v0.0.0-20241125063354-5c2fc1f1ddc2
+	github.com/olivere/vite v0.1.0
 	github.com/stretchr/testify v1.9.0
 	github.com/unrolled/render v1.6.1
 	github.com/unrolled/secure v1.14.0

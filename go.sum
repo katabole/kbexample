@@ -121,6 +121,10 @@ github.com/neelance/astrewrite v0.0.0-20160511093645-99348263ae86/go.mod h1:kHJE
 github.com/neelance/sourcemap v0.0.0-20151028013722-8c68805598ab/go.mod h1:Qr6/a/Q4r9LP1IltGz7tA7iOK1WonHEYhu1HRBA7ZiM=
 github.com/olivere/vite v0.0.0-20241125063354-5c2fc1f1ddc2 h1:yrFRHF77HTyASeJG/11+Zflj7Z5OVT+oIkeUc/EIwpI=
 github.com/olivere/vite v0.0.0-20241125063354-5c2fc1f1ddc2/go.mod h1:GcOsJRAsACfTzrwnVKPHHQb2IpqJo2o7OEGht882nuA=
+github.com/olivere/vite v0.0.0-20250319133730-12afb7a79b33 h1:1WeMPwfLEkOwsxYtGp70GJH7WczV85SRWHLSxInzYfc=
+github.com/olivere/vite v0.0.0-20250319133730-12afb7a79b33/go.mod h1:GcOsJRAsACfTzrwnVKPHHQb2IpqJo2o7OEGht882nuA=
+github.com/olivere/vite v0.1.0 h1:Wi5zTtS3BbnOrfG+oRT7KZOI9lp48gRv59VptSBmPO4=
+github.com/olivere/vite v0.1.0/go.mod h1:ef1SWmGSWAYJxSuY2Bu90YLQ7hUBxYmejIVuFGsIIe8=
 github.com/openzipkin/zipkin-go v0.1.1/go.mod h1:NtoC/o8u3JlF1lSlyPNswIbeQH9bJTmOf0Erfk+hxe8=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
