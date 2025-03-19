@@ -48,7 +48,9 @@ tasks:
     sources:
       - "**/*.go"
     cmds:
-      - go test ./...
+      # NOTE(dk): -p 1 ensures we don't run the package tests concurrently. They can interfere with each other because
+      # they share a test database. To be fixed by https://github.com/katabole/kbsql/issues/2
+      - go test -p 1 ./...
 
   # Database tasks
   # Note that most of the configuration of these comes from environment variables, loaded with dotenv above
