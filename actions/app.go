@@ -68,7 +68,7 @@ func NewApp(conf Config) (*App, error) {
 	// Set up oauth, which is configured globally here and applied in routes.go
 	gothic.Store = sessionStore
 	goth.UseProviders(
-		google.New(conf.GoogleOAuthKey, conf.GoogleOAuthSecret, fmt.Sprintf(conf.SiteURL+"/auth/google/callback")),
+		google.New(conf.GoogleOAuthKey, conf.GoogleOAuthSecret, conf.SiteURL+"/auth/google/callback"),
 	)
 
 	// Define our router middleware (logging, etc.), then define routes
