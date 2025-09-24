@@ -73,7 +73,6 @@ func NewApp(conf Config) (*App, error) {
 
 	// Define our router middleware (logging, etc.), then define routes
 	router := chi.NewRouter()
-	// TODO(dk): form POST example with csrf protection https://github.com/gorilla/csrf
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(secure.New(secure.Options{
