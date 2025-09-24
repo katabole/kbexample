@@ -60,7 +60,6 @@ func (app *App) getAssetHandler() (http.Handler, error) {
 	if app.conf.DeployEnv.IsProduction() {
 		viteHandler, err := vite.NewHandler(vite.Config{
 			FS:           build.DistDir(),
-			IsDev:        app.conf.DeployEnv.IsProduction(),
 			ViteEntry:    "js/main.js",
 			ViteTemplate: vite.Vanilla,
 			ViteManifest: "dist/manifest.json",
