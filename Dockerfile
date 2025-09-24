@@ -1,7 +1,7 @@
 # This Dockerfile provides the basics needed for deployment or docker-based builds.
 # You'll need to modify it to suite your deployment needs.
 
-FROM golang:1.23.6-alpine3.21 AS go-builder
+FROM golang:1.24.7-alpine3.22 AS go-builder
 
 WORKDIR /src
 
@@ -15,7 +15,6 @@ RUN go mod download
 COPY . .
 
 RUN npm install
-RUN npx webpack
 RUN go build -o /bin/app
 
 
