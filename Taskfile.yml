@@ -1,9 +1,14 @@
 version: '3'
 
+set:
+  - pipefail
+
   # Load env/development.env by default, but allow it to be overridden by setting ENV like `ENV=production task <task>`
+dotenv: ['env/{{.ENV}}.env']
 env:
   ENV: "{{.ENV | default \"development\"}}"
-dotenv: ['env/{{.ENV}}.env']
+  GOBIN:
+    sh: go env GOPATH
 
 tasks:
 
@@ -16,8 +21,8 @@ tasks:
       # Do an initial build of the frontend assets to ensure that when we build the Go app, embed succeeds
       - npx vite build
       - go install
-      - if [[ ! $(command -v air) ]]; then go install github.com/air-verse/air@v1.52.2; fi
-      - if [[ ! $(command -v atlas) ]]; then curl -sSf https://atlasgo.sh | sh -s -- -y; fi
+      - export PATH="{{.GOBIN}}/bin:$PATH" && if [[ ! $(command -v air) ]]; then go install github.com/air-verse/air@v1.52.2; fi
+      - export PATH="{{.GOBIN}}/bin:$PATH" && if [[ ! $(command -v atlas) ]]; then curl -sSf https://atlasgo.sh | sh -s -- -y; fi
       - task: "db:up"
       - task: "db:apply"
       - task: "db:seed"
@@ -31,7 +36,7 @@ tasks:
     cmds:
       # Sometimes the previous process doesn't get killed properly, ensure it's gone
       - pkill kbexample || true
-      - air {{.CLI_ARGS}}
+      - export PATH="{{.GOBIN}}/bin:$PATH" && air {{.CLI_ARGS}}
 
   dev:frontend:
     cmds:
@@ -41,7 +46,7 @@ tasks:
     desc: Run the backend with dlv for debugging
     cmds:
       - npx vite build
-      - dlv debug .
+      - export PATH="{{.GOBIN}}/bin:$PATH" && dlv debug .
 
   test:
     desc: "Run tests (hint: use -w to test continuously)"
@@ -74,12 +79,12 @@ tasks:
   db:apply:
     desc: Ensure any changes in the schema.sql file are applied to the dev database
     cmds:
-      - atlas schema apply --to file://schema.sql --url "postgresql:///kbexample_dev" --dev-url "postgresql:///atlas_dev"
+      - export PATH="{{.GOBIN}}/bin:$PATH" && atlas schema apply --to file://schema.sql --url "postgresql:///kbexample_dev" --dev-url "postgresql:///atlas_dev"
 
   db:gen-migration:
     desc: Create a migration file based on the changes made to schema.sql
     cmds:
-      - atlas migrate diff {{.CLI_ARGS}} --dir "file://migrations" --to file://schema.sql --dev-url "postgresql:///atlas_dev"
+      - export PATH="{{.GOBIN}}/bin:$PATH" && atlas migrate diff {{.CLI_ARGS}} --dir "file://migrations" --to file://schema.sql --dev-url "postgresql:///atlas_dev"
 
   db:shell:
     desc: Open a psql shell to the database
