@@ -1,8 +1,5 @@
 version: '3'
 
-set:
-  - pipefail
-
   # Load env/development.env by default, but allow it to be overridden by setting ENV like `ENV=production task <task>`
 env:
   ENV: "{{.ENV | default \"development\"}}"
