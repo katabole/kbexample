@@ -17,6 +17,7 @@ tasks:
       - npx vite build
       - go install
       - if [[ ! $(command -v air) ]]; then go install github.com/air-verse/air@v1.52.2; fi
+      - "if [[ ! $(command -v air) ]]; then echo \"WARNING: Attempted to go install the air command, but it still could not be found; to fix this, try adding ~/bin/go to your PATH like so: go env GOPATH >> .zshrc\"; fi"
       - if [[ ! $(command -v atlas) ]]; then curl -sSf https://atlasgo.sh | sh -s -- -y; fi
       - task: "db:up"
       - task: "db:apply"
