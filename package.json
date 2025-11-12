@@ -5,7 +5,10 @@
   "license": "MIT",
   "repository": "github.com/katabole/kbexample",
   "engines": {
-    "node": ">=18"
+    "node": ">=19"
+  },
+  "scripts": {
+    "preinstall": "node -e \"const v=process.versions.node.split('.')[0];if(v<19){console.error('Error: Node.js 19 or higher is required. Current version: '+process.version);process.exit(1)}\""
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
