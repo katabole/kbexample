@@ -10,44 +10,42 @@ import (
 )
 
 func TestCSRFProtection_BlocksUntrustedOrigins(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
 	// Try to POST from an untrusted origin
-	baseURL := "http://" + fix.App.srv.Addr
 	body := strings.NewReader("name=Evil+User&email=evil@example.com")
-	req, err := http.NewRequest("POST", baseURL+"/users", body)
+	req, err := http.NewRequest("POST", f.URL("/users"), body)
 	require.NoError(t, err)
 
 	req.Header.Set("Origin", "https://evil.com")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, err := fix.Client.Do(req)
+	resp, err := f.Client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
 
 	// In development mode, CrossOriginProtection allows all origins (zero-value behavior)
 	// In production mode with trusted origins configured, this should be blocked
-	if fix.App.conf.DeployEnv.IsProduction() {
+	if f.App.conf.DeployEnv.IsProduction() {
 		assert.Equal(t, http.StatusForbidden, resp.StatusCode,
 			"Should block requests from untrusted origins in production")
 	}
 }
 
 func TestCSRFProtection_AllowsTrustedOrigins(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
 	// POST with the trusted origin (SITE_URL)
-	baseURL := "http://" + fix.App.srv.Addr
 	body := strings.NewReader("name=Test+User&email=test@example.com")
-	req, err := http.NewRequest("POST", baseURL+"/users", body)
+	req, err := http.NewRequest("POST", f.URL("/users"), body)
 	require.NoError(t, err)
 
 	req.Header.Set("Origin", conf.SiteURL)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, err := fix.Client.Do(req)
+	resp, err := f.Client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
 
@@ -57,19 +55,18 @@ func TestCSRFProtection_AllowsTrustedOrigins(t *testing.T) {
 }
 
 func TestCSRFProtection_AllowsRefererHeader(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
 	// POST with valid Referer header (used when Origin is not present)
-	baseURL := "http://" + fix.App.srv.Addr
 	body := strings.NewReader("name=Test+User&email=test@example.com")
-	req, err := http.NewRequest("POST", baseURL+"/users", body)
+	req, err := http.NewRequest("POST", f.URL("/users"), body)
 	require.NoError(t, err)
 
 	req.Header.Set("Referer", conf.SiteURL+"/users/new")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, err := fix.Client.Do(req)
+	resp, err := f.Client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
 
@@ -78,42 +75,40 @@ func TestCSRFProtection_AllowsRefererHeader(t *testing.T) {
 }
 
 func TestCSRFProtection_BlocksInvalidReferer(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
 	// POST with invalid Referer header
-	baseURL := "http://" + fix.App.srv.Addr
 	body := strings.NewReader("name=Evil+User&email=evil@example.com")
-	req, err := http.NewRequest("POST", baseURL+"/users", body)
+	req, err := http.NewRequest("POST", f.URL("/users"), body)
 	require.NoError(t, err)
 
 	req.Header.Set("Referer", "https://evil.com/attack")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, err := fix.Client.Do(req)
+	resp, err := f.Client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
 
-	if fix.App.conf.DeployEnv.IsProduction() {
+	if f.App.conf.DeployEnv.IsProduction() {
 		assert.Equal(t, http.StatusForbidden, resp.StatusCode,
 			"Should block requests with invalid Referer in production")
 	}
 }
 
 func TestCSRFProtection_AllowsSafeMethodsWithoutOrigin(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
 	safeMethods := []string{"GET", "HEAD", "OPTIONS"}
 
 	for _, method := range safeMethods {
 		t.Run(method, func(t *testing.T) {
 			// Safe methods should work without Origin or Referer headers
-			baseURL := "http://" + fix.App.srv.Addr
-			req, err := http.NewRequest(method, baseURL+"/", nil)
+			req, err := http.NewRequest(method, f.URL("/"), nil)
 			require.NoError(t, err)
 
-			resp, err := fix.Client.Do(req)
+			resp, err := f.Client.Do(req)
 			require.NoError(t, err)
 			defer resp.Body.Close()
 
@@ -125,8 +120,8 @@ func TestCSRFProtection_AllowsSafeMethodsWithoutOrigin(t *testing.T) {
 }
 
 func TestCSRFProtection_ProtectsAllMutatingEndpoints(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
 	tests := []struct {
 		method string
@@ -142,19 +137,18 @@ func TestCSRFProtection_ProtectsAllMutatingEndpoints(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.method+" "+tt.path, func(t *testing.T) {
 			// Try to perform state-changing operation from untrusted origin
-			baseURL := "http://" + fix.App.srv.Addr
 			body := strings.NewReader("name=Hacker&email=hacker@example.com")
-			req, err := http.NewRequest(tt.method, baseURL+tt.path, body)
+			req, err := http.NewRequest(tt.method, f.URL(tt.path), body)
 			require.NoError(t, err)
 
 			req.Header.Set("Origin", "https://attacker.com")
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-			resp, err := fix.Client.Do(req)
+			resp, err := f.Client.Do(req)
 			require.NoError(t, err)
 			defer resp.Body.Close()
 
-			if fix.App.conf.DeployEnv.IsProduction() {
+			if f.App.conf.DeployEnv.IsProduction() {
 				assert.Equal(t, http.StatusForbidden, resp.StatusCode,
 					"%s %s should be protected from cross-origin requests in production",
 					tt.method, tt.path)
@@ -164,20 +158,18 @@ func TestCSRFProtection_ProtectsAllMutatingEndpoints(t *testing.T) {
 }
 
 func TestCSRFProtection_AllowsSameOriginRequests(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
-	// Construct same-origin URL from the test server address
-	sameOrigin := "http://" + fix.App.srv.Addr
-	baseURL := "http://" + fix.App.srv.Addr
+	// Use the same origin as the test server
 	body := strings.NewReader("name=Same+Origin+User&email=same@example.com")
-	req, err := http.NewRequest("POST", baseURL+"/users", body)
+	req, err := http.NewRequest("POST", f.URL("/users"), body)
 	require.NoError(t, err)
 
-	req.Header.Set("Origin", sameOrigin)
+	req.Header.Set("Origin", f.BaseURL)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, err := fix.Client.Do(req)
+	resp, err := f.Client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
 
@@ -187,19 +179,18 @@ func TestCSRFProtection_AllowsSameOriginRequests(t *testing.T) {
 }
 
 func TestCSRFProtection_BlocksMissingOriginAndReferer(t *testing.T) {
-	fix := NewFixture(t)
-	defer fix.Cleanup()
+	f := NewFixture(t)
+	defer f.Cleanup()
 
 	// State-changing request without Origin or Referer headers
-	baseURL := "http://" + fix.App.srv.Addr
 	body := strings.NewReader("name=No+Origin&email=noorigin@example.com")
-	req, err := http.NewRequest("POST", baseURL+"/users", body)
+	req, err := http.NewRequest("POST", f.URL("/users"), body)
 	require.NoError(t, err)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	// Explicitly NOT setting Origin or Referer
 
-	resp, err := fix.Client.Do(req)
+	resp, err := f.Client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
 
