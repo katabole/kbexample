@@ -52,9 +52,10 @@ func TestMain(m *testing.M) {
 }
 
 type Fixture struct {
-	t      *testing.T
-	App    *App
-	Client *kbhttp.Client
+	t       *testing.T
+	App     *App
+	Client  *kbhttp.Client
+	BaseURL string
 }
 
 // NewFixture starts a local test server and returns it along with a cleanup function that should be deferred.
@@ -69,12 +70,18 @@ func NewFixture(t *testing.T) *Fixture {
 	require.Nil(t, err)
 
 	return &Fixture{
-		t:      t,
-		App:    app,
-		Client: kbhttp.NewClient(kbhttp.ClientConfig{BaseURL: baseURL}),
+		t:       t,
+		App:     app,
+		Client:  kbhttp.NewClient(kbhttp.ClientConfig{BaseURL: baseURL}),
+		BaseURL: baseURL.String(),
 	}
 }
 
 func (f *Fixture) Cleanup() {
 	assert.Nil(f.t, f.App.Stop(context.Background()))
+}
+
+// URL returns the full URL for the given path.
+func (f *Fixture) URL(path string) string {
+	return f.BaseURL + path
 }
