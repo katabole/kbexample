@@ -15,6 +15,7 @@ RUN go mod download
 COPY . .
 
 RUN npm install
+RUN npx vite build
 RUN go build -o /bin/app
 
 
