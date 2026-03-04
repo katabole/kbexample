@@ -80,16 +80,38 @@ func NewApp(conf Config) (*App, error) {
 		SSLRedirect:     true,
 		SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
 	}).Handler)
-	router.Use(cors.Handler(cors.Options{
-		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
-		AllowedOrigins: []string{"https://*", "http://*"},
-		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+
+	// Configure CORS FIRST so headers are present even when CSRF protection blocks requests
+	corsOptions := cors.Options{
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
-		MaxAge:           300, // Maximum value not ignored by any of major browsers
-	}))
+		AllowCredentials: true, // Required for session cookies in cross-origin requests
+		MaxAge:           300,  // Maximum value not ignored by any of major browsers
+	}
+
+	if conf.DeployEnv.IsProduction() {
+		// In production, only allow specific trusted origins
+		corsOptions.AllowedOrigins = []string{conf.SiteURL}
+	} else {
+		// In development, allow any origin (needed for testing CSRF protection)
+		corsOptions.AllowOriginFunc = func(r *http.Request, origin string) bool { return true }
+	}
+
+	router.Use(cors.Handler(corsOptions))
+
+	// Configure cross-origin protection (CSRF defense) AFTER CORS
+	crossOriginProtection := http.NewCrossOriginProtection()
+	if conf.DeployEnv.IsProduction() {
+		// In production, only trust requests from SITE_URL
+		if err := crossOriginProtection.AddTrustedOrigin(conf.SiteURL); err != nil {
+			return nil, fmt.Errorf("could not add trusted origin: %w", err)
+		}
+	}
+	// In development, the zero-value CrossOriginProtection allows all origins
+	router.Use(func(next http.Handler) http.Handler {
+		return crossOriginProtection.Handler(next)
+	})
 	router.Use(kbsession.NewMiddleware(sessionStore))
 
 	if err := app.defineRoutes(router); err != nil {
