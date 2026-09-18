@@ -28,6 +28,8 @@ jobs:
 
       - name: Setup Go environment
         uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
 
       - name: Install Atlas
         uses: ariga/setup-atlas@v0

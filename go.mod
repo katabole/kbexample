@@ -1,6 +1,6 @@
 module github.com/katabole/kbexample
 
-go 1.25.4
+go 1.27.0
 
 require (
 	github.com/elnormous/contenttype v1.0.4
