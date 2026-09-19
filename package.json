@@ -5,14 +5,14 @@
   "license": "MIT",
   "repository": "github.com/katabole/kbexample",
   "engines": {
-    "node": ">=20"
+    "node": "^20.19.0 || >=22.12.0"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.3",
-    "vite": "^7.2.2"
+    "bootstrap": "^5.3.8",
+    "vite": "^8.3.0"
   },
   "devDependencies": {
-    "sass": "^1.85.0"
+    "sass": "^1.104.1"
   }
 }

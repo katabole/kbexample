@@ -2,14 +2,14 @@
 // integration with the Go build.
 export default {
   appType: 'custom',
+  // Vite 8: declare the entry at the top level rather than under build.rolldownOptions.input, since the
+  // top-level option is also picked up by the dev server's dependency optimizer, not just production builds.
+  input: '/js/main.js',
   build: {
     outDir: 'build/dist',
     // Since we're already outputting to a build subdirectory and we want to embed the manifest file, output to
     // 'manifest.json' rather than the default '.vite/manifest.json'
     manifest: 'manifest.json',
-    rollupOptions: {
-      input: '/js/main.js',
-    },
   },
   css: {
     preprocessorOptions: {
