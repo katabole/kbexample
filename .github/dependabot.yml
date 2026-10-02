@@ -1,5 +1,15 @@
+# Each group below pins update-types to patch/minor/major explicitly. This is
+# already Dependabot's default when update-types is omitted, but it's spelled
+# out here so a reader doesn't need to know that default to trust that major
+# bumps are intentionally included, not an oversight.
 version: 2
 updates:
+  # Note: Dependabot can only propose a major-version PR for a Go module when
+  # the bump doesn't require an import path change. Go's semantic import
+  # versioning makes a major bump (e.g. .../v5 -> .../v6) a *different*
+  # module path, which Dependabot's resolver never queries for, so those
+  # bumps won't appear here regardless of this config. See
+  # https://github.com/dependabot/dependabot-core/issues/4453.
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
@@ -9,6 +19,10 @@ updates:
       go-dependencies:
         patterns:
           - "*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/"
@@ -19,6 +33,10 @@ updates:
       npm-dependencies:
         patterns:
           - "*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -29,3 +47,7 @@ updates:
       github-actions:
         patterns:
           - "*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
