@@ -8,7 +8,7 @@ require (
 	github.com/go-chi/cors v1.2.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/jackc/pgx/v5 v5.12.0
+	github.com/jackc/pgx/v5 v5.13.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/katabole/kbhttp v0.1.1
@@ -20,7 +20,7 @@ require (
 	github.com/olivere/vite v0.1.0
 	github.com/stretchr/testify v1.12.1
 	github.com/unrolled/render v1.8.1
-	github.com/unrolled/secure v1.17.0
+	github.com/unrolled/secure v1.18.0
 )
 
 require (
